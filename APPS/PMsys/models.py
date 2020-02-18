@@ -1,4 +1,5 @@
 from django.db import models
+from tinymce.models import HTMLField
 
 from db.base_model import BaseModel
 
@@ -20,7 +21,7 @@ class Items(BaseModel):
         (3, '过保修期'),
     )
 
-    item_type = models.SmallIntegerField(choices=ITEMS_TYPE_CHOICE, max_length=64, default='wind', verbose_name='项目类型')
+    item_type = models.SmallIntegerField(choices=ITEMS_TYPE_CHOICE, default=1, verbose_name='项目类型')
     name = models.CharField(max_length=64, unique=True, verbose_name='项目名称')  # 不可重复
     status = models.SmallIntegerField(choices=ITEM_STATUS, default=0, verbose_name='项目状态')
     address = models.CharField(max_length=64, null=True, blank=True, verbose_name='地址')
@@ -66,7 +67,7 @@ class ItemLinkman(BaseModel):
         (2, '休假'),
         (3, '离职'),
     )
-    items = models.ForeignKey('Items', on_delete=models.SET_NULL)
+    items = models.ForeignKey('Items', null=True, blank=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=32, verbose_name='姓名')
     phone = models.CharField(max_length=11, null=True, blank=True, verbose_name='电话')
     status = models.SmallIntegerField(choices=USER_STATUS_CHOICE, default=1, verbose_name='人员状态')
@@ -86,14 +87,17 @@ class ItemLinkman(BaseModel):
 
 class Manufacturer(BaseModel):
     """主机厂信息"""
+    FACTURER_TYPE_CHOICE = (
+        (1, '风电'),
+        (2, '火电'),
+    )
 
-    name = models.CharField(max_length=64, verbose_name='主机厂名称')
-    linkman = models.CharField(max_length=32, null=True, blank=True, verbose_name='主机厂联系人')
-    mobile = models.CharField(max_length=11, default='', verbose_name='主机厂联系电话')
+    title = models.CharField(max_length=64, verbose_name='主机厂名称')
+    modle = models.SmallIntegerField(choices=FACTURER_TYPE_CHOICE, null=True, blank=True, verbose_name='行业类型')
     memo = models.TextField(null=True, blank=True, verbose_name='备注')
 
     def __str__(self):
-        return self.name
+        return self.title
 
     class Meta:
         verbose_name = '厂商'
@@ -102,18 +106,75 @@ class Manufacturer(BaseModel):
 
 class WindPower(BaseModel):
     """风电主机表"""
-    ITEMS_TYPE_CHOICE = (
-        (1, '风电'),
-        (2, '火电'),
-    )
 
-    items = models.ForeignKey('Items', on_delete=models.SET_NULL)
+    items = models.ForeignKey('Items', on_delete=models.CASCADE)
     title = models.CharField(max_length=64, verbose_name='风机名称')
+    manufacturer = models.ForeignKey('Manufacturer', null=True, blank=True, verbose_name='厂商信息',
+                                     on_delete=models.SET_NULL)
+    model = models.CharField(max_length=64, null=True, blank=True, verbose_name='风机型号')
+    nameplate = models.CharField(max_length=64, null=True, blank=True, verbose_name='铭牌')
+    height = models.IntegerField(verbose_name='塔筒高度')
+    blade_length = models.IntegerField(verbose_name='叶片长度')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = '风电主机'
+        verbose_name_plural = verbose_name
+
+
+class ItemsFiles(BaseModel):
+    """项目文件表"""
+
+    FILE_TYPE_CHOICE = (
+        (1, '入场手续'),
+        (2, '验收单'),
+        (3, '质量检验单'),
+        (4, '其它'),
+    )
+    items = models.ForeignKey('Items', on_delete=models.CASCADE)
+    # title = models.CharField(max_length=32, verbose_name='文件名字')
+    type = models.SmallIntegerField(choices=FILE_TYPE_CHOICE, verbose_name='文件类型')
+    path = models.FileField(verbose_name='文件位置')
+
+    class Meta:
+        verbose_name = '项目文件'
+        verbose_name_plural = verbose_name
+
+
+class ItemsImage(BaseModel):
+    """项目图片"""
+
+    items = models.ForeignKey('Items', on_delete=models.CASCADE)
+    image = models.ImageField(verbose_name='图片')
+
+    class Meta:
+        verbose_name = '项目图片'
+        verbose_name_plural = verbose_name
+
+
+class ItemTrip(BaseModel):
+
+    items = models.ForeignKey('Items', on_delete=models.CASCADE)
+    direction = models.SmallIntegerField(default=0, verbose_name='出行方向')
+    city = models.CharField(max_length=32, verbose_name='城市')
+    percept = models.TextField(verbose_name='方案')
+    # percept = HTMLField(verbose_name='方案详情')
+
+    class Meta:
+        verbose_name = '出行表'
+
+
+class ItemStay(BaseModel):
+
+    items = models.ForeignKey('Items', on_delete=models.CASCADE)
+    hoteltitle = models.CharField(max_length=32, verbose_name='酒店名称')
+    hosteladdress = models.CharField(max_length=64, verbose_name='酒店地址')
 
 
 
-
-class ItemServer(models.Model):
+class ItemServer(BaseModel):
 
     server_type_choice = (
         (0, '浏览站'),
@@ -131,3 +192,10 @@ class ItemServer(models.Model):
 
     class Meta:
         verbose_name = '服务器信息'
+
+
+class ServerImage(BaseModel):
+    pass
+
+
+
