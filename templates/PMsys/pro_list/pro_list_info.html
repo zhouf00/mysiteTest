@@ -1,0 +1,42 @@
+{% extends 'PMsys/pro_list/pro_list.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">寒风领项目详情</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#"><i class="fas fa-tachometer-alt"></i> Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'project' %}">寒风领项目详情</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <!-- COLOR PALETTE -->
+        <div class="card card-default color-palette-box">
+            <div class="card-header">
+                <a id="LIST-DEV" href="{% url 'list-show:dev' %}" class="btn btn-header">设备</a>
+                <a id="LIST-SERVER" href="{% url 'list-show:server' %}" class="btn btn-header">服务器</a>
+                <a id="LIST-RELATED" href="{% url 'list-show:related' %}" class="btn btn-header">项目相关</a>
+                <a id="LIST-DELI" href="{% url 'list-show:deli' %}" class="btn btn-header">库存发货</a>
+                <a href="" class="btn btn-header">维护信息</a>
+                <a href="" class="btn btn-header">传感器</a>
+                <a href="" class="btn btn-header">采集站</a>
+                <a id="LIST-PERSON" href="{% url 'list-show:person' %}" class="btn btn-header">人员联系表</a>
+            </div>
+            <div class="card-body">
+                {% block cardbody %}
+
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

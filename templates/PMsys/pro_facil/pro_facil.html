@@ -1,0 +1,60 @@
+{% extends 'base_left.html' %}
+{% load staticfiles %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/person_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">各设备详情</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#"><i class="fas fa-tachometer-alt"></i> Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'project' %}">各设备详情</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <!-- COLOR PALETTE -->
+        <div class="card card-default color-palette-box">
+            <div class="card-header">
+                <a href="{% url 'facil-show:manu_info' %}" class="btn btn-header" id="FACIL-MANU">厂家信息</a>
+                <a href="{% url 'facil-show:dev_info' %}" class="btn btn-header" id="FACIL-DEV">设备信息</a>
+                <a href="{% url 'facil-show:col_info' %}" class="btn btn-header" id="FACIL-COL">采集器</a>
+                <a href="{% url 'facil-show:sensor_info' %}" class="btn btn-header" id="FACIL-SENSOR">传感器</a>
+            </div>
+            <div class="card-body">
+                {% block cardbody %}
+
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/layer/layer.js' %}"></script>
+    <script>
+        $.ajaxSetup({
+            data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
+        });
+        $(function () {
+            $('#PROJECT-FACILITIES').addClass('active');
+        })
+    </script>
+
+    {% block scripts %}
+
+    {% endblock %}
+{% endblock %}

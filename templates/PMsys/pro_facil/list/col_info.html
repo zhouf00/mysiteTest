@@ -1,0 +1,98 @@
+{% extends 'PMsys/pro_facil/pro_facil.html' %}
+{% load staticfiles %}
+
+{% block cardbody %}
+<div class="control-btns">
+        <button class="btn btn-primary btn-add" id="addRow">新建</button>
+        <button class="btn btn-primary btn-add">保存</button>
+    </div>
+    <div class="tabs">
+        <table class="table table-bordered text-center" id="table">
+            <thead>
+            <tr>
+                <th >序号</th>
+                <th>类型</th>
+                <th>采集器型号</th>
+                <th>通道数</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if data %}
+                {% for facility in data %}
+                    <tr id="tab-{{ forloop.counter }}">
+                        <input type="hidden" value="{{ facility.id }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td><select>
+                            <option value="1" {% ifequal facility.modal 1 %}selected{% endifequal %}>振动监测</option>
+                            <option value="2" {% ifequal facility.modal 2 %}selected{% endifequal %}>油液监测</option>
+                        </select></td>
+                        <td><input type="text" value="{{ facility.title }}"></td>
+                        <td><input type="text" value="{{ facility.chanelnum }}"></td>
+                        <td><input type="text"></td>
+                        <td><button title='保存' onclick='doSave("tab-1")' ><i class='fas fa-pencil-alt'></i></button></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr id="tab-1">
+                    <input type="hidden" value="">
+                    <td>1</td>
+                    <td><select>
+                        <option value="1">振动监测</option>
+                    </select></td>
+                    <td><input type="text" value="DGU2000V2（示例）"></td>
+                    <td><input type="text" value="8"></td>
+                    <td><input type="text"></td>
+                    <td><button title='保存' onclick='doSave("tab-1")' ><i class='fas fa-pencil-alt'></i></button></td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('#FACIL-COL').addClass('btn-primary');
+        $('#addRow').click(function () {
+            let num = Number($('#table tbody tr').length +1);
+            let html = `<tr id='tab-${num}'>
+                 <input type="hidden" value="">
+                 <td>${num}</td>
+                <td><select>${$('#table tbody select').html()}</select></td>
+                <td><input type="text" value=""></td>
+                <td><input type="text" value=""></td>
+                <td><input type="text"></td>
+                <td><button title='保存' onclick='doSave("tab-${num}")' ><i class='fas fa-pencil-alt'></i></button></td>
+               </tr>`;
+            $('#table tbody').append(html);
+            console.log(html)
+        })
+    });
+    function doSave(id) {
+        var inputs = $('#'+id+ ' input');
+        var data = {'modal':$('#'+id+' select').find('option:selected').val()};
+        var title = ['id','title', 'chanelnum', 'memo'];
+        for (var i=0; i<inputs.length; i++) {
+            data[title[i]] = inputs[i].value;
+        }
+        $.ajax({
+            type:'post',
+            url:'{% url 'facil-show:col_info' %}',
+            data:data,
+            success:function (msg) {
+                if(msg.result == 'success'){
+                   layer.alert('数据保存成功！', {icon: 1}, function (index) {
+                       parent.layer.closeAll();
+                   });
+               }else if(msg.result=='fail'){
+                   layer.alert(msg.message, {icon: 5});
+               }
+            }
+        });
+        console.log(data);
+    }
+</script>
+{% endblock %}

@@ -11,9 +11,12 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR, 'APPS'))  # 把app集中到APPS中
+sys.path.insert(0, os.path.join(BASE_DIR, 'extra_apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,14 +34,26 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'xadmin',
+    'tinymce',  # 富文本编辑器
+    'system.apps.SystemConfig',
+    'users.apps.UsersConfig',
+    'personal.apps.PersonalConfig',
+    'rbac.apps.RbacConfig',
     'PMsys',
 ]
+
+AUTH_USER_MODEL = 'users.UserProfile'
+AUTHENTICATION_BACKENDS = (
+    'users.views_user.UserBackend',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -48,6 +63,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users.middleware.MenuMiddleware',
+    # 'rbac.middleware.RbacMiddleware',
 ]
 
 ROOT_URLCONF = 'mysiteTest.urls'
@@ -75,10 +92,20 @@ WSGI_APPLICATION = 'mysiteTest.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'APPS/db.sqlite3'),
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'windit_test',
+        'HOST': '10.100.0.151',
+        'USER': 'root',
+        'PASSWORD': 'test',
+        'PORT': '3306',
     }
 }
 
@@ -121,6 +148,25 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR,'static','css')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 富文本编辑器配置
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'advanced',
+    'width': 600,
+    'height': 400,
+}
+
+LOGIN_URL = '/login/'
+
+# URL white list
+SAFE_URL = [r'^/$',
+            '/login/',
+            '/logout',
+            '/index/',
+            '/media/',
+            '/xadmin/',
+            ]

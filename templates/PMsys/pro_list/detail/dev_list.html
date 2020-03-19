@@ -1,0 +1,234 @@
+<!--项目列表详情-设备-->
+{% extends 'PMsys/pro_list/pro_list_info.html' %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/server_detail.css' %}">
+{% endblock %}
+
+{% block cardbody %}
+<!--项目列表详情-设备-->
+    <button type="button" class="btn btn-sm btn-primary btn-add-list" id="show-layer">
+        新建
+    </button>
+    <div class="card-body pb-0">
+
+        <div class="row">
+            {% for power in data %}
+            <div class="col-lg-3 col-sm-6 col-md-3 d-flex align-items-stretch">
+                <div class="card bg-light card-block">
+                    <div class="card-header text-muted border-bottom-0 header-block">
+                        <img class="server-img" src="{% static 'img/timg.png' %}">
+                        <span class="server-name">{{ power }}</span>
+                        {% if not power.status %}
+                        <span class="text-danger"><i class="fas fa-circle"></i>异常</span>
+                        {% else %}
+                        <span class="text-success"><i class="fas fa-circle"></i>正常</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="cont-div">
+                            <p>机型：<span class="tips-text">{{ power.windpower }}</span></p>
+                            <p>塔筒高度：<span class="tips-text">{{ power.windpower.height }}</span></p>
+                        </div>
+                        <div class="cont-div">
+                            <p>叶片长度：<span class="tips-text">{{ power.windpower.blade_length }}</span></p>
+                            <p>塔筒层高：<span class="tips-text">{{ power.windpower.blade_length }}</span></p>
+                        </div>
+                        {% for item_facility in item_facilitys %}
+                            <p class="dgmName"><b>采集器{{ forloop.counter }}</b></p>
+                            <div class="cont-div" >
+                                <p>编号：<span class="tips-text">{{ item_facility.f_title }}</span></p>
+                                <p>IP：<span class="tips-text">{{ item_facility.ip }}</span></p>
+                            </div>
+                            <div class="cont-div" >
+                                <p>嵌入式版本：<span class="tips-text">{{ item_facility.soft_version }}</span></p>
+                                <p>硬件版本：<span class="tips-text">{{ item_facility.hardware_version }}</span></p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer text-center">
+                        <button type="button" class="btn btn-sm btn-primary" onclick="doChange('{{ power.id }}')">
+                            详情
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="doImage('{{ power.id }}')">
+                            照片
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="doLog('{{ power.id }}')">
+                            日志
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+            <!--<div class="col-12 col-sm-6 col-md-3 d-flex align-items-stretch">
+                <div class="card bg-light card-block card1">
+                    <div class="card-header text-muted border-bottom-0 header-block">
+                        <img class="server-img" src="{% static 'img/timg.png' %}">
+                        <span class="server-name">1号风机</span>
+                        <span class="text-success"><i class="fas fa-circle"></i>正常</span>
+                    </div>
+                    <div class="card-body pt-0" id="body">
+                        <div class="info">
+                                <b>主机厂商</b>
+                                <span class="text-sm" id="manu">联合动力</span>
+                        </div>
+                        <div class="info">
+                                <b>机型</b>
+                                <span class="text-sm">直驱1.5</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-center">
+                            <button type="button" class="btn btn-sm btn-primary" id="show-col" data-id="{{ pc.id }}">
+                                采集器
+                            </button>
+{#                            <button type="button" class="btn btn-sm btn-primary" id="sensor" data-toggle="modal" data-target="#dev-show">#}
+{#                                详情#}
+{#                            </button>#}
+                            <button type="button" class="btn btn-sm btn-primary" id="show-layer">
+                                详情
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/layer/layer.js' %}"></script>
+<script>
+    $(function () {
+        $('#LIST-DEV').addClass('btn-primary');
+    })
+</script>
+    <script>
+        $(document).ready(function () {
+            $('#dev-modal').change(function () {
+                let selcetVal = $('#dev-modal').val();
+                let selcetText = $('#dev-modal').find('option:selected').text().split('|');
+                console.log(selcetText)
+                let html = `
+                            <b>主机厂：</b>${selcetText[0]}
+                            <b>机型：</b>${selcetText[1]}
+                            <b>塔筒高度：</b>${selcetText[2]}
+                            <b>塔筒节数：</b>${selcetText[3]}
+                            <b>叶片长度：</b>${selcetText[4]}
+                            `;
+                $('#show-power').html(null);
+                $('#show-power').html(html);
+            });
+            $('#col-modal-1').change(function () {
+                let selectId = $('#col-modal-1')
+                let selectVal = selectId.val();
+                let selectText = selectId.find('option:selected').text().split('|');
+                console.log(selectText);
+                let html = `
+                            <b>类型：</b>${selectText[0]}
+                            <b>采集器型号：</b>${selectText[1]}
+                            <b>通道数：</b>${selectText[2]}
+                            `;
+                $('#show-col-1').html(null).html(html);
+            });
+            $('#col-modal-2').change(function () {
+                let selectId = $('#col-modal-2');
+                let selectVal = selectId.val();
+                let selectText = selectId.find('option:selected').text().split('|');
+                console.log(selectText);
+                let html = `
+                            <b>类型：</b>${selectText[0]}
+                            <b>采集器型号：</b>${selectText[1]}
+                            <b>通道数：</b>${selectText[2]}
+                            `;
+                $('#show-col-2').html(null).html(html);
+            });
+            $('.sensor').click(function () {
+                $('#dev-show #modal-title').html('haha');
+                var dev = {{ dev|safe  }};
+                console.log(dev.id1);
+            });
+            $('#show-col').click(function () {
+                var users = new Array();
+                users.push({'a':1,'b':2});
+                $('#body').toggle();
+                let data = {
+                    'manu': $('#manu').text(),
+                    'sensor': JSON.stringify(users),
+                };
+                $.ajax({
+                    type:'POST',
+                    data:data,
+                })
+            });
+            $('#btnSave').click(function () {
+                var inputs = $('#col-1-td input');
+                var tmp ='facility='+$('#col-1-td').attr('data-id');
+                let sen1=[];
+                let obj={}
+                for (var i=1, ii=inputs.length; i<=ii; i++){
+                    tmp += '&'+inputs[i-1].name+'='+ inputs[i-1].value;
+                    console.log(inputs[i-1].name);
+                    {#console.log(inputs[i].value);#}
+                    if(i%4==0){
+                        sen1.push(tmp);
+                        console.log(sen1);
+                        tmp = 'facility='+$('#col-1-td').attr('data-id');
+                    }
+                }
+                [].push.apply(obj, sen1)
+                $.ajax({
+                    type: $('#add-power').attr('method'),
+                    url: "{% url 'list-show:dev' %}",
+                    data: obj,
+                    cache: false,
+                    success: function (msg) {
+
+                       return ;
+                    }
+                });
+            });
+            $('#show-layer').on('click', function () {
+                layer.open({
+                    type:2,
+                    title: '新建风机',
+                    area:['700px', '500px'],
+                    shadeClose: true,
+                    content: "{% url 'list-show:dev_detail' %}",
+                    end:function () {
+                        window.location.reload()
+                    }
+                })
+            })
+        });
+        function doChange(id) {
+            layer.open({
+                type:2,
+                title: '修改风机',
+                area:['700px', '500px'],
+                shadeClose: true,
+                content: ["{% url 'list-show:dev_detail' %}"+ '?powerId=' + id, 'no'],
+                end:function () {
+                    window.location.reload()
+                }
+            })
+        }
+        function doImage(id) {
+            layer.open({
+                type:1,
+                title:'照片暂未开发完成'
+            })
+        }
+        function doLog(id) {
+            layer.open({
+                type:1,
+                title:'日志暂未开发完成'
+            })
+        }
+
+    </script>
+{% endblock %}
