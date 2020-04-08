@@ -1,0 +1,29 @@
+.tips-div{
+    width: 100%;
+    padding-left: 18%;
+    margin-top: 10px;
+    font-size: 14px;
+    color:#6c757d!important;
+}
+.tips-div>b{
+    padding-right: 10px;
+}
+.card-body{
+    height: 395px;
+    overflow-y: auto;
+}
+.btn-80{
+    width: 80px;
+}
+
+#col-1-td .form-control{
+    margin-bottom: 1rem;
+}
+.form-label{
+    height: 38px;
+    line-height: 38px;
+    padding-right: 15px;
+}
+#addForm .form-group {
+    margin-bottom: 10px!important;
+}

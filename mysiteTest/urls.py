@@ -19,6 +19,8 @@ from mysiteTest.settings import MEDIA_ROOT
 
 import xadmin
 
+from django.conf.urls.static import static
+import mysiteTest.settings as settings
 from users.views_user import IndexView, LoginView, LogoutView
 from system.views import SystemView
 from personal import views as personal_views
@@ -53,5 +55,4 @@ urlpatterns = [
     url(r'^project/work_log/$', pmsys_views.ProjectWorklogView.as_view(), name='work_log'),
     url(r'^project/facilities/$', pmsys_views.ProjectFacilities.as_view(), name='pro_facil'),
     url(r'^project/facilities/show/', include(('PMsys.urls', 'facil-show'), namespace='facil-show')),
-
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

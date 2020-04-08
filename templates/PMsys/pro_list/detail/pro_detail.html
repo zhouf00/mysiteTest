@@ -1,0 +1,522 @@
+<!--项目列表详情-项目相关-->
+{% extends 'PMsys/pro_list/pro_list_info.html' %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/pro_detail.css' %}">
+{% endblock %}
+{% block cardbody %}
+{% csrf_token %}
+    <input type="hidden" id="items" value="{{ request.session.item_id }}">
+    <input type="hidden" id="user" value="{{ request.user.id }}">
+<!--入场手续-->
+<div class="card card-pros collapsed-card">
+    <div class="card-header">
+        <h3 class="card-title">入场手续</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="procedure-open">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body card-pro" id="procedure-body">
+        <ul></ul>
+{#        <input type="text" class="form-control" id="procedure-name" value="">#}
+        <div class="control-btn">
+            <input type="hidden" id="procedure-type" value="1">
+            <input type="file" id="procedure">
+            <button type="button" class="btn btn-primary btn-send" id="procedureSave">保存</button>
+        </div>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!--住宿方式-->
+<div class="card card-pros collapsed-card">
+    <div class="card-header">
+        <h3 class="card-title">住宿方式</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="stay-open">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body card-pro" id="stay-body">
+        <ul>
+
+        </ul>
+        <div>
+            <input type="text" id="hoteltitle" placeholder="酒店名称">
+            <input type="text" id="hoteladdress" placeholder="酒店地址">
+            <input type="text" id="telephone" placeholder="酒店电话">
+            <textarea class="form-control" id="hotelmemo" placeholder="说明详情"></textarea>
+        </div>
+        <div class="control-btn">
+{#            <button type="button" class="btn btn-primary btn-send" id="addNew">新建</button>#}
+            <button type="button" class="btn btn-primary btn-send" id="staySave">保存</button>
+{#            <button type="button" class="btn btn-default btn-send">取消</button>#}
+        </div>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!--通勤方式-->
+<div class="card card-pros collapsed-card">
+    <div class="card-header">
+        <h3 class="card-title">通勤方式</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="trip-open">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body card-pro" id="trip-body">
+        <ul>
+
+        </ul>
+        <div>
+            <select id="direction">
+                <option value="1">目标城市到项目现场</option>
+                <option value="2">项目现场到目标城市</option>
+            </select>
+            <input type="text" id="city" placeholder="目标城市">
+            <textarea class="form-control" id="percept" placeholder="方案详情"></textarea>
+        </div>
+        <div class="control-btn">
+            <button type="button" class="btn btn-primary btn-send" id="tripSave">保存</button>
+{#            <button type="button" class="btn btn-default btn-send">取消</button>#}
+        </div>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!--工具借用-->
+<div class="card card-pros collapsed-card">
+    <div class="card-header">
+        <h3 class="card-title">工具借用</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="explain-open">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body card-pro" id="explain-body">
+        <ul></ul>
+        <div>
+            <input type="hidden" id="explain-type" value="1">
+            <textarea class="form-control" id="explain-content"></textarea>
+        </div>
+        <div class="control-btn">
+            <button type="button" class="btn btn-primary btn-send" id="explainSave">保存</button>
+        </div>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!--验收单-->
+<div class="card card-pros collapsed-card">
+    <div class="card-header">
+        <h3 class="card-title">验收单</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="receipt-open">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body card-pro" id="receipt-body">
+        <ul>
+
+        </ul>
+        <div class="control-btn">
+            <input type="hidden" id="receipt-type" value="2">
+            <input type="file" id="receipt">
+            <button type="button" class="btn btn-primary btn-send" id="receiptSave">保存</button>
+{#            <button type="button" class="btn btn-default btn-send">取消</button>#}
+        </div>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!--相关照片-->
+<div class="card card-pros collapsed-card">
+    <div class="card-header">
+        <h3 class="card-title">相关照片</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body card-pro" >
+        <ul class="card-list">
+            <li class="card-li">
+                余婉清     2020.2.20.20:20 余婉清    01验收单.jpg
+            </li>
+            <li class="card-li">
+                下载文件
+            </li>
+        </ul>
+        <div class="control-btn">
+            <button type="button" class="btn btn-primary btn-send" id="sendPhoto">上传</button>
+            <button type="button" class="btn btn-primary btn-send">保存</button>
+            <button type="button" class="btn btn-default btn-send">取消</button>
+        </div>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!--转诊资料-->
+<div class="card card-pros collapsed-card">
+    <div class="card-header">
+        <h3 class="card-title">转诊资料</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body card-pro">
+        <ul class="card-list">
+            <li class="card-li">
+                下载文件
+            </li>
+            <li class="card-li">
+                下载文件
+            </li>
+        </ul>
+        <div class="control-btn">
+            <button type="button" class="btn btn-primary btn-send" id="send">上传</button>
+            <button type="button" class="btn btn-primary btn-send">保存</button>
+            <button type="button" class="btn btn-default btn-send">取消</button>
+        </div>
+    </div>
+    <!-- /.card-body -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    $(function () {
+        $('#LIST-RELATED').addClass('btn-primary');
+    })
+</script>
+
+    <script>
+        // 入场手续
+        $('#procedure-open').click(function () {
+            let ul = "#procedure-body ul";
+            let url = '{% url 'list-show:procedure' %}';
+            // 打开隐藏窗口加载网页，图标为 + 号
+            let open = $('#procedure-open').find('.fa-plus').length;
+            doHtmlFile(ul, url, open, $('#procedure-type').val());
+        });
+        $('#procedureSave').click(function () {
+            // 图标为 - 号，加载网页
+            let open = $('#procedure-open').find('.fa-minus').length;
+            let ul = "#procedure-body ul";
+            let url = '{% url 'list-show:procedure' %}';
+            var formData = new FormData();
+            formData.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
+            formData.append('items', $('#items').val());
+            formData.append('user', $('#user').val());
+            formData.append('type', $('#procedure-type').val());
+            formData.append('title', $('#procedure-name').val());
+            formData.append('file', $('#procedure')[0].files[0]);
+            $.ajax({
+                url: '{% url 'list-show:procedure' %}',
+                type: 'post',
+                data: formData,
+                contentType: false,   // 不让jQuery设置提交数据的类型
+                processData: false,   //不让jQuery去处理提交的数据
+                success:function (msg) {
+                    if (msg.result == 'sussecc'){
+                        layer.alert(msg.msg,{icon: 1});
+                        doHtmlFile(ul, url, open, $('#procedure-type').val());
+                        $('#procedure').val('')
+                    }else if (msg.result == 'fail'){
+                        layer.alert(msg.msg, {icon: 5})
+                    }
+                }
+            })
+        });
+        function doHtmlFile(ul, url, open, type) {
+            console.log(type);
+            if (open) {
+                let procedureHtml = '';
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    data: {'type':type},
+                    cache: false,
+                    success: function (msg) {
+                        for (let i in msg.data) {
+                            procedureHtml += `<li class="card-li">
+                            <span>${msg.data[i].create_time}</span>
+                            <span>${msg.data[i].user__name}</span>
+                            <a href="/media/${msg.data[i].file}">${msg.data[i].file.split('/')[1]}</a>
+                            <button title="删除" onclick="doDeleteFile(${msg.data[i].id},'${ul}', '${url}', ${open}, ${type}) "><i class='fas fa-trash-alt'></i></button></li>
+                            `
+                        }
+                        {#procedureHtml = '<ul>' + procedureHtml + '</ul>';#}
+                        $(ul).html(null).html(procedureHtml)
+                    }
+                });
+            }
+            return ;
+        }
+        // 住宿方式
+        $('#stay-open').click(function () {
+            let ul = "#stay-body ul";
+            let url = '{% url 'list-show:stay' %}';
+            // 打开隐藏窗口加载网页，图标为 + 号
+            let open = $('#stay-open').find('.fa-plus').length;
+            doHtmlStay(ul, url, open);
+        });
+        $('#staySave').click(function () {
+            // 图标为 - 号，加载网页
+            let open = $('#stay-open').find('.fa-minus').length;
+            let ul = "#stay-body ul";
+            let url = '{% url 'list-show:stay' %}';
+            var formData = new FormData();
+            formData.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
+            formData.append('items', $('#items').val());
+            formData.append('user', $('#user').val());
+            formData.append('hoteltitle', $('#hoteltitle').val());
+            formData.append('hoteladdress', $('#hoteladdress').val());
+            formData.append('telephone', $('#telephone').val());
+            formData.append('memo', $('#hotelmemo').val());
+
+            $.ajax({
+                url: '{% url 'list-show:stay' %}',
+                type: 'post',
+                data: formData,
+                contentType: false,   // 不让jQuery设置提交数据的类型
+                processData: false,   //不让jQuery去处理提交的数据
+                success:function (msg) {
+                    if (msg.result == 'sussecc'){
+                        layer.alert(msg.msg,{icon: 1});
+                        doHtmlStay(ul, url, open);
+                        $('#hoteltitle').val('');
+                        $('#hoteladdress').val('');
+                        $('#telephone').val('');
+                        $('#hotelmemo').val('');
+                    }else if (msg.result == 'fail'){
+                        layer.alert(msg.msg, {icon: 5});
+                    }
+                }
+            })
+        });
+        function doHtmlStay(ul, url, open) {
+            if (open) {
+                let procedureHtml = '';
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    cache: false,
+                    success: function (msg) {
+                        for (let i in msg.data) {
+                            procedureHtml += `<li class="card-li">
+                            <span>${msg.data[i].create_time}</span>
+                            <span>${msg.data[i].user__name}</span><br>
+                            <span>${msg.data[i].hoteltitle}</span>
+                            <span>${msg.data[i].hoteladdress}</span>
+                            <span>${msg.data[i].telephone}</span>
+                            <span>${msg.data[i].memo}</span></li>
+                            `
+                        }
+                        $(ul).html(null).html(procedureHtml)
+                    }
+                });
+            }
+            return ;
+        }
+        // 通勤方式
+        $('#trip-open').click(function () {
+            let ul = "#trip-body ul";
+            let url = '{% url 'list-show:trip' %}';
+            // 打开隐藏窗口加载网页，图标为 + 号
+            let open = $('#trip-open').find('.fa-plus').length;
+            doHtmlTrip(ul, url, open);
+        });
+        $('#tripSave').click(function () {
+            // 图标为 - 号，加载网页
+            let open = $('#trip-open').find('.fa-minus').length;
+            let ul = "#trip-body ul";
+            let url = '{% url 'list-show:trip' %}';
+            var formData = new FormData();
+            formData.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
+            formData.append('items', $('#items').val());
+            formData.append('user', $('#user').val());
+            formData.append('direction', $('#direction').val());
+            formData.append('city', $('#city').val());
+            formData.append('percept', $('#percept').val());
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: formData,
+                contentType: false,   // 不让jQuery设置提交数据的类型
+                processData: false,   //不让jQuery去处理提交的数据
+                success:function (msg) {
+                    if (msg.result == 'sussecc'){
+                        layer.alert(msg.msg,{icon: 1});
+                        doHtmlTrip(ul, url, open, );
+                        $('#city').val('');
+                        $('#percept').val('')
+                    }else if (msg.result == 'fail'){
+                        layer.alert(msg.msg, {icon: 5});
+                    }
+                }
+            })
+        });
+        function doHtmlTrip(ul, url, open) {
+            if (open) {
+                let procedureHtml = '';
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    cache: false,
+                    success: function (msg) {
+                        let arrows
+                        for (let i in msg.data) {
+                            if(msg.data[i].direction == 1){
+                                arrows = '<<'
+                            }else if(msg.data[i].direction == 2){
+                                arrows = '>>'
+                            }
+                            console.log(arrows)
+                            procedureHtml += `<li class="card-li">
+                            <span>${msg.data[i].create_time}</span>
+                            <span>${msg.data[i].user__name}</span>
+                            <span>${msg.data[i].items__name}</span>
+                            <span>${arrows}</span>
+                            <span>${msg.data[i].city}</span><br>
+                            <span>${msg.data[i].percept}</span>
+                            `
+                        }
+                        $(ul).html(null).html(procedureHtml)
+                    }
+                });
+            }
+            return ;
+        }
+        // 验收单
+        $('#receipt-open').click(function () {
+            let ul = "#receipt-body ul";
+            let url = '{% url 'list-show:procedure' %}';
+            // 打开隐藏窗口加载网页，图标为 + 号
+            let open = $('#receipt-open').find('.fa-plus').length;
+            doHtmlFile(ul, url, open, $('#receipt-type').val());
+        });
+        $('#receiptSave').click(function () {
+            // 图标为 - 号，加载网页
+            let open = $('#receipt-open').find('.fa-minus').length;
+            let ul = "#receipt-body ul";
+            let url = '{% url 'list-show:procedure' %}';
+            var formData = new FormData();
+            formData.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
+            formData.append('items', $('#items').val());
+            formData.append('user', $('#user').val());
+            formData.append('type', $('#receipt-type').val());
+            formData.append('title', $('#receipt-name').val());
+            formData.append('file', $('#receipt')[0].files[0]);
+            $.ajax({
+                url: '{% url 'list-show:procedure' %}',
+                type: 'post',
+                data: formData,
+                contentType: false,   // 不让jQuery设置提交数据的类型
+                processData: false,   //不让jQuery去处理提交的数据
+                success:function (msg) {
+                    if (msg.result == 'sussecc'){
+                        layer.alert(msg.msg,{icon: 1});
+                        doHtmlFile(ul, url, open, $('#receipt-type').val());
+                        $('#receipt').val('');
+                    }else if (msg.result == 'fail'){
+                        layer.alert(msg.msg, {icon: 5})
+                    }
+                }
+            })
+        });
+        // 工具借用
+        $('#explain-open').click(function () {
+            let ul = "#explain-body ul";
+            let url = '{% url 'list-show:explain' %}';
+            // 打开隐藏窗口加载网页，图标为 + 号
+            let open = $('#explain-open').find('.fa-plus').length;
+            doHtmlExplain(ul, url, open);
+        });
+        $('#explainSave').click(function () {
+            // 图标为 - 号，加载网页
+            let open = $('#explain-open').find('.fa-minus').length;
+            let ul = "#explain-body ul";
+            let url = '{% url 'list-show:explain' %}';
+            var formData = new FormData();
+            formData.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
+            formData.append('items', $('#items').val());
+            formData.append('user', $('#user').val());
+            formData.append('type', $('#explain-type').val());
+            formData.append('content', $('#explain-content').val());
+
+            $.ajax({
+                url: '{% url 'list-show:explain' %}',
+                type: 'post',
+                data: formData,
+                contentType: false,   // 不让jQuery设置提交数据的类型
+                processData: false,   //不让jQuery去处理提交的数据
+                success:function (msg) {
+                    if (msg.result == 'sussecc'){
+                        layer.alert(msg.msg,{icon: 1});
+                        doHtmlTool(ul, url, open);
+                        $('#toolmemo').val('');
+                    }else if (msg.result == 'fail'){
+                        layer.alert(msg.msg, {icon: 5});
+                    }
+                }
+            })
+        });
+        function doHtmlExplain(ul, url, open) {
+            if (open) {
+                let procedureHtml = '';
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    cache: false,
+                    success: function (msg) {
+                        for (let i in msg.data) {
+                            procedureHtml += `<li class="card-li">
+                            <span>${msg.data[i].create_time}</span>
+                            <span>${msg.data[i].user__name}</span><br>
+                            <span>${msg.data[i].content}</span>
+                            `
+                        }
+                        $(ul).html(null).html(procedureHtml)
+                    }
+                });
+            }
+            return ;
+        }
+    </script>
+    <script>
+        // 删除函数
+        function doDeleteFile(id, ul, url, open, type) {
+            console.log(type);
+            layer.alert('确定删除吗？',{
+                title: '提示',
+                icon: 3, //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+                time:0, //不自动关闭
+                btn: ['YES', 'NO'],
+                yes: function (index) {
+                    layer.close(index);
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'list-show:file_delete' %}",
+                        data: {'id': id, csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        cache: false,
+                        success: function (msg) {
+                            if(msg.result){
+                                layer.alert(msg.message,{icon: 1});
+                                doHtmlFile(ul, url, open, type);
+                            }else{
+                                layer.alert('删除失败', {icon: 5});
+                            }
+                            return ;
+                        }
+                    });
+                }
+            })
+        }
+    </script>
+{% endblock %}
+

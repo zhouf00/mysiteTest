@@ -1,17 +1,18 @@
-import json, re
+import json, re, os
 from django.shortcuts import render, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
 from django.core.serializers.json import DjangoJSONEncoder
 
 from utils.mixin_utils import LoginRequiredMixin
+from utils.tools.rendom_pwd import pwdlist
 
 from rbac.models import Menu
 from system.models import SystemSetup
 from PMsys import models as pms
 from PMsys.call_project import NewPower
 from PMsys.forms import (ItemServerForm, DevinfoForm, ManuinfoForm, FacilityForm, SensorForm,
-                         PowerForm,)
+                         PowerForm, ImageForm)
 
 
 class ListDevView(LoginRequiredMixin, View):
@@ -19,9 +20,14 @@ class ListDevView(LoginRequiredMixin, View):
     def get(self, request):
         if 'id' in request.GET and request.GET['id']:
             request.session['item_id'] = request.GET['id']
+            request.session['item_name'] = pms.Items.objects.filter(pk=request.GET['id'])[0].name
+            # print(pms.Items.objects.filter(pk=request.GET['id'])[0])
         data = pms.ItemPower.objects.filter(items=request.session['item_id']).order_by('p_title')
-        item_facilitys = pms.ItemFacilitys.objects.filter(itempower=data[0])
-        print(item_facilitys)
+        if data:
+            item_facilitys = pms.ItemFacilitys.objects.filter(itempower=data[0])
+        else:
+            item_facilitys = None
+        # print(item_facilitys)
         dev = {'id1': '123'}
         ret = {
             'dev': json.dumps(dev),
@@ -32,9 +38,8 @@ class ListDevView(LoginRequiredMixin, View):
         return render(request, 'PMsys/pro_list/detail/dev_list.html', ret)
 
     def post(self, request):
-        for var in json.loads(request.POST['sensor']):
-            print(var['b'])
-
+        # for var in json.loads(request.POST['sensor']):
+        #     print(var['b'])
         ret = {}
 
         return HttpResponse(json.dumps(ret), content_type='application/json')
@@ -50,7 +55,7 @@ class ListDevDetailView(LoginRequiredMixin, View):
         windpowers = pms.WindPower.objects.all()
         facilitys = pms.FacilityType.objects.all()
         sensors = pms.SensorType.objects.all()
-        print(request.GET)
+        # print(request.GET)
         ret = {
             'windpowers': windpowers,
             'facilitys': facilitys,
@@ -64,9 +69,10 @@ class ListDevDetailView(LoginRequiredMixin, View):
             ret['item_power'] = item_power
             ret['item_facility'] = item_facility[0]
             ret['item_sensors'] = item_sensors
-            print('有ID')
+            # print('有ID')
         else:
-            print('无ID')
+            pass
+            # print('无ID')
         return render(request, 'PMsys/pro_list/detail/dev_detail.html', ret)
 
     def post(self, request):
@@ -84,31 +90,6 @@ class ListDevDetailView(LoginRequiredMixin, View):
                 print('不存在')
                 newpower = NewPower(request, 0)
                 newpower.power_upline()
-            # powerData, _ = pms.ItemPower.objects.filter(items=pms.Items(request.session['item_id']), ).filter(
-            #     p_title=request.POST['p_title'])
-            # if powerData:
-            #     print('风机已存在')
-            #     facilityData = pms.ItemFacilitys.objects.filter(itempower=powerData)
-            #     print(facilityData)
-            #     pass
-            # else:
-            #     # 新建风机
-            #     powerData = pms.ItemPower.objects.update_or_create(
-            #         items=pms.Items(request.session['item_id']),
-            #         windpower=pms.WindPower(request.POST['windpower']),
-            #         p_title=request.POST['p_title'],
-            #         status=request.POST['status']
-            #     )
-            #     powerData.facilitys.clear()
-            #     facilityData = pms.ItemFacilitys.objects.update_or_create(
-            #         itempower=powerData,
-            #         facilitys_id=request.POST['facility'],
-            #         f_title=request.POST['f_title'],
-            #         ip=request.POST['ip'],
-            #         soft_version=request.POST['soft_version'],
-            #         hardware_version=request.POST['hardware_version'],
-            #     )
-
                 ret = {
                     'result': 'sussecc',
                 }
@@ -140,7 +121,7 @@ class ListServerView(LoginRequiredMixin, View):
             # print(ret)
             return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
         else:
-            ret = dict(data=pms.ItemServer.objects.all(),b='test')
+            ret = dict(data=pms.ItemServer.objects.filter(item_id=request.session['item_id']),b='test')
         return render(request, 'PMsys/pro_list/detail/server_detail.html', ret)
 
     def post(self, request):
@@ -173,8 +154,39 @@ class ListRelatedView(LoginRequiredMixin, View):
 class ListDeliView(ListRelatedView, View):
 
     def get(self, request):
+        item_goods = pms.ItemGoods.objects.all()
+        goods_image = pms.GoodsImage.objects.all()
+        ret = {
+            'item_goods': item_goods,
+            'goods_image': goods_image,
+        }
+        return render(request, 'PMsys/pro_list/detail/deli_detail.html', ret)
 
-        return render(request, 'PMsys/pro_list/detail/deli_detail.html')
+    def post(self, request):
+        if request.FILES and 'memo' in request.POST and request.POST['memo'] :
+            goods = pms.ItemGoods.objects.create(
+                items_id=int(request.POST['items']),
+                user_id=request.POST['user'],
+                memo=request.POST['memo']
+            )
+            files = request.FILES.getlist('image')
+            for file in files:
+                # print({'image':file})
+                image_form = ImageForm({'goods':goods.id}, {'image':file})
+                print(image_form)
+                if image_form.is_valid():
+                    image_form.save()
+            ret = {
+                'result': 'sussecc',
+                'msg': '保存成功'
+            }
+            return HttpResponse(json.dumps(ret), content_type='application/json')
+        else:
+            ret = {
+                'result': 'fail',
+                'msg': '发货说明或附件不能为空'
+            }
+            return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 class ListPersonView(ListRelatedView, View):
@@ -184,8 +196,8 @@ class ListPersonView(ListRelatedView, View):
         return render(request, 'PMsys/pro_list/detail/person_detail.html')
 
     def post(self, request):
-        print(request.POST)
-        ret ={}
+
+        ret = {}
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
@@ -296,3 +308,18 @@ class FacilSensorView(LoginRequiredMixin, View):
                 'message':re.findall(pattern, str(sensor_form.errors))[0]
             }
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
+
+
+class FacilPasswdView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        f = open(os.path.join(os.getcwd() +'\\APPS\\utils\\tools\\passwd.txt'), 'r')
+        a = f.readlines()
+        pwd_dict = dict()
+        for var in a:
+            key, value = var.split(':')
+            pwd_dict[key] = value.strip()
+        ret = {
+            'passwds' : pwd_dict
+        }
+        return render(request, 'PMsys/pro_facil/list/pwd_info.html', ret)

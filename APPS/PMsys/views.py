@@ -51,8 +51,8 @@ class ProjectListView(LoginRequiredMixin, View):
             ret['data'] = pms.Items.objects.all()
         ret['itemfacilitys'] = pms.ItemFacilitys.objects.all()
         # pms.ItemFacilitys.objects.filter(itempower_items)
-        print(ret['itemfacilitys'][0].facilitys.get_modal_display())
-        print(ret['itemfacilitys'][0].itempower.items)
+        # print(ret['itemfacilitys'][0].facilitys.get_modal_display())
+        # print(ret['itemfacilitys'][0].itempower.items)
         return render(request, 'PMsys/pro_list/pro_list.html', ret)
 
     def post(self, request):

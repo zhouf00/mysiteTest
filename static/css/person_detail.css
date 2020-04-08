@@ -1,0 +1,38 @@
+.person-card{
+    position: relative;
+}
+.control-btns{
+    position: absolute;
+    right: 18px;
+    top: -10px;
+}
+.control-btns button{
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0;
+}
+.tabs{
+    margin-top: 10px;
+}
+.tabs .table td input{
+    width: 100%;
+    border: none;
+    text-align: center;
+}
+.tabs .table td input:focus{
+    outline: none;
+}
+.tabs .table th{
+    background: #007BFF;
+    color: #fff;
+}
+.table td{
+    padding: .25rem .75rem;
+    position: relative;
+}
+.table th{
+    height: 40px;
+    line-height: 40px;
+    padding: 0;
+}

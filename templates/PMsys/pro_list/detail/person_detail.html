@@ -1,0 +1,66 @@
+<!--项目列表详情-人员联系表-->
+{% extends 'PMsys/pro_list/pro_list_info.html' %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/person_detail.css' %}">
+{% endblock %}
+{% block cardbody %}
+<!--项目列表详情-人员联系表-->
+<div class="card-body person-card">
+    <div class="control-btns">
+        <button class="btn btn-primary btn-add" id="addRow">新建</button>
+        <button class="btn btn-primary btn-add">保存</button>
+    </div>
+    <div class="tabs">
+        <table class="table table-bordered text-center" id="table">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>姓名</th>
+                <th>厂家名称</th>
+                <th>职务</th>
+                <th>电话</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input class="" type="text" value="1"></td>
+                <td><input class="" type="text" value="陈丽珊"></td>
+                <td><input class="" type="text" value="寒风岭风场"></td>
+                <td><input class="" type="text" value="办公室主任"></td>
+                <td><input class="" type="text" value="18888888888"></td>
+            </tr>
+            <tr>
+                <td><input class="" type="text" value="2"></td>
+                <td><input class="" type="text" value="陈丽珊"></td>
+                <td><input class="" type="text" value="寒风岭风场"></td>
+                <td><input class="" type="text" value="办公室主任"></td>
+                <td><input class="" type="text" value="18888888888"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('#LIST-PERSON').addClass('btn-primary');
+        $('#addRow').click(function () {
+            let num = Number($('#table tbody tr').length +1);
+            let html = `<tr>
+                 <td><input class="" type="text" value=${num}></td>
+                <td><input class="" type="text" value=""></td>
+                <td><input class="" type="text" value=""></td>
+               <td><input class="" type="text" value=""></td>
+               <td><input class="" type="text" value=""></td>
+               </tr>`;
+            $('#table tbody').append(html)
+        })
+    })
+</script>
+
+{% endblock %}
+

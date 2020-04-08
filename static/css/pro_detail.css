@@ -1,0 +1,36 @@
+
+.card-pros{
+    background: #f4f6f9;
+}
+.card-pro{
+    padding: 10px;
+}
+.card-list{
+    text-align: center;
+    width: 360px;
+    margin: 30px auto;
+}
+.card-list>li{
+    list-style: none;
+    line-height: 30px;
+    border-bottom: 1px solid #ccc;
+}
+.btn-send{
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0;
+}
+.control-btn{
+    float: right;
+}
+.room-list{
+    margin: 20px 0;
+}
+.user-info{
+    display: flex;
+    justify-content: space-between;
+}
+.room{
+    margin-bottom: 10px;
+}

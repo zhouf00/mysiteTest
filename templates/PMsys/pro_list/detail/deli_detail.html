@@ -1,0 +1,71 @@
+<!--项目列表详情-库存发货-->
+{% extends 'PMsys/pro_list/pro_list_info.html' %}
+{% load staticfiles %}
+
+{% block css %}
+
+{% endblock %}
+{% block cardbody %}
+<!--项目列表详情-库存发货-->
+    {% for good in item_goods %}
+        <ul>
+            <li>
+                <span>{{ good.user }}</span>
+                <span>{{ good.create_time }}</span><br>
+                <span>{{ good.memo }}</span>
+            </li>
+        </ul>
+        <div>
+            {% for image in goods_image %}
+                {% if image.goods == good %}
+                    <img src="/media/{{ image.image }}" alt="">
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <form id="DeliForm" method="post">
+        <input type="hidden" id="items" value="{{ request.session.item_id }}">
+        <input type="hidden" id="user" value="{{ request.user.id }}">
+        {% csrf_token %}
+        <textarea class="form-control" id="memo" placeholder="发货说明"></textarea>
+        <input type="file" name="myfiles" id="myfiles" multiple="">
+        <button type="button" class="btn btn-primary btn-send" id="deliSave">保存</button>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('#LIST-DELI').addClass('btn-primary');
+    })
+</script>
+    <script>
+        $('#deliSave').click(function () {
+            var formData = new FormData();
+            let files = $('#myfiles')[0].files;
+            formData.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
+            formData.append('items', $('#items').val());
+            formData.append('user', $('#user').val());
+            formData.append('memo', $('#memo').val());
+            for(i=0;i<files.length;i++){
+                formData.append('image', files[i]);
+            }
+            console.log(files[0]);
+            $.ajax({
+                type: 'post',
+                data:  formData,
+                contentType: false,   // 不让jQuery设置提交数据的类型
+                processData: false,   //不让jQuery去处理提交的数据
+                success:function (msg) {
+                    if (msg.result == 'sussecc'){
+                        layer.alert(msg.msg,{icon: 1});
+                        window.location.reload();
+                        $('#procedure').val('')
+                    }else if (msg.result == 'fail'){
+                        layer.alert(msg.msg, {icon: 5})
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

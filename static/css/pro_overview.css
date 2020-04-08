@@ -1,0 +1,56 @@
+.map-content{
+    background:#fff;
+    border:1px solid rgba(232,234,237,1);
+    border-radius:4px;
+    text-align: center;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.map-content img{
+    max-width: 80%;
+}
+.staff-content{
+    background:#fff;
+    border:1px solid rgba(232,234,237,1);
+    border-radius:4px;
+}
+.staff-header{
+    font-size:22px;
+    font-family:Source Han Serif CN;
+    font-weight:300;
+    color:#000;
+    height: 46px;
+    line-height: 46px;
+    border-bottom:1px solid rgba(232,234,237,1);
+    padding-left: 20px;
+}
+.staff-table{
+    padding: 10px 20px;
+    font-size: 16px;
+}
+.state{
+    display: inline-block;
+    padding: 2px;
+    border-radius: 2px;
+}
+.color1{
+    background: #EBD200;
+}
+.color2{
+    background: #00EB63;
+}
+.color3{
+    background: #E65EFF;
+}
+.color4{
+    background: #FF003D;
+}
+.table td {
+    padding: .25rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+#map_china{
+    width: calc(100vw * 55%);
+    height: calc(100vh - 200px);
+}

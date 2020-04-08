@@ -1,0 +1,114 @@
+{% extends 'system/system_index.html' %}
+{% load staticfiles %}
+
+{% block main %}
+    <div class="card card-primary">
+        <form class="form-horizontal" id="addForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ user.id }}">
+            <input type="hidden" name="user" value="">
+            <div class="card-body">
+                <fieldset>
+                    <legend>
+                        <h5>基本信息</h5>
+                    </legend>
+                    <div class="row form-group has-feedback">
+                        <label class="col-sm-2 control-label">姓名</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" name="name" readonly="readonly"
+                                   value="{{ user.name }}">
+                        </div>
+                        <label class="col-sm-2 control-label">用户名</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" name="username" readonly="readonly"
+                                   value="{{ user.username }}">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        <h5>联系信息</h5>
+                    </legend>
+                    <div class="row form-group has-feedback">
+                        <label class="col-sm-2 control-label">手机</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="mobile" type="text" readonly="readonly"
+                                   value="{{ user.mobile }}">
+                        </div>
+                        <label class="col-sm-2 control-label">邮箱</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="email" type="text" readonly="readonly"
+                                   value="{{ user.email }}">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        <h5>密码信息</h5>
+                    </legend>
+                    <div class="row form-group has-feedback">
+                        <label class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="password" type="password">
+                        </div>
+                        <label class="col-sm-2 control-label">确认密码</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="confirm_password" type="password">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        <h5>其他信息</h5>
+                    </legend>
+                    <div class="row form-group has-feedback">
+                        <label class="col-sm-2 control-label">创建时间</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="post" type="text" readonly="readonly"
+                            value="{{ user.date_joined }}">
+                        </div>
+                        <label class="col-sm-2 control-label">确认密码</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="post" type="text" readonly="readonly"
+                            value="{{ user.last_login|default_if_none:'' }}">
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="card-footer">
+                <div class="text-center">
+                    <button type="button" id="btnSave" class="btn btn-primary text-left" data-toggle="modal">保存</button>
+                    <button type="button" id="btnCancel" class="btn btn-default text-right" data-toggle="modal">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $('#btnSave').click(function () {
+           var data = $('#addForm').serialize();
+            $.ajax({
+               type: $('#addForm').attr('method'),
+               url: "{% url 'system-basic:user_adminpasswdchange' %}",
+               data: data,
+               cache: false,
+               success: function (msg) {
+                   if(msg.status == 'success'){
+                       layer.alert('密码修改成功！', {icon: 1}, function (index) {
+                           parent.layer.closeAll();
+                       });
+                   }else if(msg.status=='fail'){
+                       {#layer.alert('数据保存失败', {icon: 5});#}
+                       layer.alert(msg.admin_passwd_change_form_errors, {icon:5});
+                   }
+                   return ;
+               }
+            });
+        });
+        $('#btnCancel').click(function () {
+            window.location.reload()
+        })
+    </script>
+{% endblock %}

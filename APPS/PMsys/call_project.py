@@ -21,7 +21,7 @@ class NewPower:
         newpower.delete()
 
     def _create_itempower(self):
-        print('保存风机')
+        # print('保存风机')
         if self.p:
             newpower = ItemPower.objects.filter(pk=int(self.request.POST['powerId']))[0]
             newpower.items_id = self.request.session['item_id']
@@ -44,7 +44,7 @@ class NewPower:
         return newpower
 
     def _create_itemfacility(self, newpower):
-        print('保存采集器')
+        # print('保存采集器')
         f = ItemFacilitys.objects.filter(itempower=newpower, ip=self.request.POST['ip'])
         if f:
             newfacility = f[0]
@@ -70,11 +70,11 @@ class NewPower:
         return newfacility
 
     def _create_itemsenor(self, newfacility):
-        print('保存传感器')
+        # print('保存传感器')
         newfacility.sensors.clear()
 
         for newsensor in self.sensors:
-            print(newsensor)
+            # print(newsensor)
             # s = ItemSensors.objects.filter(itemfacility=newfacility, s_title=newsensor['number'])
 
             ItemSensors.objects.create(

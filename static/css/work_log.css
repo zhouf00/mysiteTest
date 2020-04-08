@@ -1,0 +1,63 @@
+@charset "utf-8";
+.form-inline{
+    display: inline-block;
+
+}
+.form-inline .radio-inline{
+    display: inline-block;
+    padding-right: 50px;
+}
+.tabs{
+    display: none;
+}
+.tabs .table-div{
+    display: inline-block;
+    width: 350px;
+    margin-right: 10px;
+    vertical-align: top;
+}
+.tabs .table{
+
+}
+.tabs .table td input{
+    width: 100%;
+    border: none;
+}
+.tabs .table td input:focus{
+    outline: none;
+}
+.tabs .table th{
+    background: #007BFF;
+    color: #fff;
+}
+.table td{
+    padding: .25rem .75rem;
+    position: relative;
+}
+.table th{
+    height: 40px;
+    line-height: 40px;
+    padding: 0;
+}
+.plus{
+    font-size: 24px;
+    font-weight: bolder;
+    color: #007BFF;
+    position: absolute;
+    top: 0;
+    right: 15px;
+    cursor: pointer;
+}
+.right-block{
+    float: right;
+}
+.right-block .btn-add{
+    display: none;
+}
+.right-block .btn{
+    width: 90px;
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+}

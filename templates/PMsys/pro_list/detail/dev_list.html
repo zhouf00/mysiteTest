@@ -62,46 +62,12 @@
             </div>
             {% endfor %}
         </div>
-
-
-            <!--<div class="col-12 col-sm-6 col-md-3 d-flex align-items-stretch">
-                <div class="card bg-light card-block card1">
-                    <div class="card-header text-muted border-bottom-0 header-block">
-                        <img class="server-img" src="{% static 'img/timg.png' %}">
-                        <span class="server-name">1号风机</span>
-                        <span class="text-success"><i class="fas fa-circle"></i>正常</span>
-                    </div>
-                    <div class="card-body pt-0" id="body">
-                        <div class="info">
-                                <b>主机厂商</b>
-                                <span class="text-sm" id="manu">联合动力</span>
-                        </div>
-                        <div class="info">
-                                <b>机型</b>
-                                <span class="text-sm">直驱1.5</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="text-center">
-                            <button type="button" class="btn btn-sm btn-primary" id="show-col" data-id="{{ pc.id }}">
-                                采集器
-                            </button>
-{#                            <button type="button" class="btn btn-sm btn-primary" id="sensor" data-toggle="modal" data-target="#dev-show">#}
-{#                                详情#}
-{#                            </button>#}
-                            <button type="button" class="btn btn-sm btn-primary" id="show-layer">
-                                详情
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>-->
     </div>
 
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'js/layer/layer.js' %}"></script>
+
 <script>
     $(function () {
         $('#LIST-DEV').addClass('btn-primary');
@@ -120,8 +86,7 @@
                             <b>塔筒节数：</b>${selcetText[3]}
                             <b>叶片长度：</b>${selcetText[4]}
                             `;
-                $('#show-power').html(null);
-                $('#show-power').html(html);
+                $('#show-power').html(null).html(html);
             });
             $('#col-modal-1').change(function () {
                 let selectId = $('#col-modal-1')

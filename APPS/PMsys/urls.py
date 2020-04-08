@@ -18,10 +18,16 @@ urlpatterns = [
 
     # 项目相关
     url(r'^related/$', views_list.ListRelatedView.as_view(), name='related'),
+    url(r'^related/file_delete/$', views_pro.FileDeleteView.as_view(), name='file_delete'),
+    url(r'^related/procedure/$', views_pro.ProcedureView.as_view(), name='procedure'),
+    url(r'^related/stay/$', views_pro.StayView.as_view(), name='stay'),
+    url(r'^related/trip/$', views_pro.TripView.as_view(), name='trip'),
+    url(r'^related/explain/$', views_pro.ExplainView.as_view(), name='explain'),
 
     # 资源信息
     url(r'^manu_info/$', views_list.FacilManuView.as_view(), name='manu_info'),
     url(r'^dev_info/$', views_list.FacilDevView.as_view(), name='dev_info'),
     url(r'^col_info/$', views_list.FacilColView.as_view(), name='col_info'),
     url(r'^sensor_info/$', views_list.FacilSensorView.as_view(), name='sensor_info'),
+    url(r'^passwd_info/$', views_list.FacilPasswdView.as_view(), name='passwd_info'),
 ]

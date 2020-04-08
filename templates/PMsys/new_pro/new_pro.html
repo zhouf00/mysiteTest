@@ -1,0 +1,130 @@
+{% extends 'base_left.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<!--新项目录入-->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">新项目录入</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#"><i class="fas fa-tachometer-alt"></i> Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'project' %}">新项目录入</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <!-- COLOR PALETTE -->
+        <div class="card card-default color-palette-box">
+            <div class="card-header">
+                <h3 class="card-title">
+                    新项目录入
+                </h3>
+            </div>
+            <div class="card-body">
+                <form class="form-horizontal" id="addForm" method="post">
+                    {% csrf_token %}
+                    <button type="button" id="btnSave" class="btn btn-sm btn-primary" style="float: right;width: 90px;">保存</button>
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label>项目类型</label>
+                                    <select name="item_type" class="form-control">
+                                        <option value='1'>风电</option>
+                                        <option value='2'>火电</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>风场名称</label>
+                                    <input type="text" class="form-control" name="name" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label>项目地址</label>
+                                    <input type="text" class="form-control" name="address" value="">
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="x" class="col-form-label">X坐标</label>
+                                        <input type="text" class="form-control" id="x" name="x" value="">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="y" class="col-form-label">Y坐标</label>
+                                        <input type="text" class="form-control" id="y" name="y" value="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>联系人员/职务</label>
+                                    <input type="text" class="form-control" name="contact" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label>电话</label>
+                                    <input type="text" class="form-control" name="telephone" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label>项目状态</label>
+                                    <select name="status" class="form-control">
+                                        <option value='1'>未开工</option>
+                                        <option value='2'>安装中</option>
+                                        <option value='3'>维护中</option>
+                                        <option value='4'>质保内</option>
+                                        <option value='5'>过保</option>
+                                        <option value='6'>待维护</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>主机厂商</label>
+                                    <div class="form-group">
+                                        {% for manufacturer in manufacturers %}
+                                        <label class="control-label">
+                                            <input type="checkbox" class="icheckbox_minimal" name="manufacturers" value="{{ manufacturer.id }}">
+                                            {{ manufacturer.title }}
+                                        </label>
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        $(function() {
+            $('#PROJECT-NEW').addClass('active');
+        });
+    </script>
+    <script>
+    $('#btnSave').click(function () {
+        var data = $('#addForm').serialize();
+        $.ajax({
+           type: $('#addForm').attr('method'),
+           url: "{% url 'new_pro' %}",
+           data: data,
+           cache: false,
+           success: function (msg) {
+               if(msg.status=='success'){
+                    alert('项目添加成功！', {icon: 1}, function (index) {
+                        parent.layer.closeAll();
+                    });
+               }else if(msg.status=='fail'){
+                    console.log(msg);
+                    alert(msg.itemform_errors, {icon: 5});
+               }
+               return ;
+           }
+        });
+    });
+    </script>
+{% endblock %}

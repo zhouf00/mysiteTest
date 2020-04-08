@@ -1,0 +1,224 @@
+{% extends 'base_left.html' %}
+{% load staticfiles %}
+
+{% block title %}       SandBox       {% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/work_log.css' %}">
+{% endblock %}
+
+{% block content %}
+<!--工作日志-->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">工作日志</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#"><i class="fas fa-tachometer-alt"></i> Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'project' %}">工作日志</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <!-- COLOR PALETTE -->
+        <div class="card card-default color-palette-box">
+            <div class="card-header">
+                <h3 class="card-title">
+                    工作日志
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="tab-title">
+                    <span>状态</span>
+                    <div class="form-group form-inline" id="radios">
+                        <div class="custom-control custom-radio radio-inline">
+                            <input class="custom-control-input" type="radio" id="customRadio1" data-choose="tab1" name="workState">
+                            <label for="customRadio1" class="custom-control-label">途中</label>
+                        </div>
+                        <div class="custom-control custom-radio radio-inline">
+                            <input class="custom-control-input" type="radio" id="customRadio2" data-choose="tab2" name="workState">
+                            <label for="customRadio2" class="custom-control-label">事假</label>
+                        </div>
+                        <div class="custom-control custom-radio radio-inline">
+                            <input class="custom-control-input" type="radio" id="customRadio3" data-choose="tab3" name="workState">
+                            <label for="customRadio3" class="custom-control-label">调休</label>
+                        </div>
+                        <div class="custom-control custom-radio radio-inline">
+                            <input class="custom-control-input" type="radio" id="customRadio4" data-choose="tab4" name="workState">
+                            <label for="customRadio4" class="custom-control-label">试装</label>
+                        </div>
+                        <div class="custom-control custom-radio radio-inline">
+                            <input class="custom-control-input" type="radio" id="customRadio5" data-choose="tab5" name="workState">
+                            <label for="customRadio5" class="custom-control-label">施工</label>
+                        </div>
+                    </div>
+                    <div class="right-block">
+                        <span>日历</span>
+                        <button class="btn btn-primary btn-add" id="addOne">新建</button>
+                        <button class="btn btn-primary btn-keep" id="save">保存</button>
+                    </div>
+                </div>
+                <div class="tab-content">
+                        <div class="row">
+                            <div class="col-lg-4 col-sm-12">
+                                <div class="tabs" id="tab1">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">项目名称</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control" id="select-pro">
+                                            <option>寒风岭项目</option>
+                                            <option>option 2</option>
+                                            <option>option 3</option>
+                                            <option>option 4</option>
+                                            <option>option 5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="input2" class="col-sm-2 col-form-label">当前地址</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="input2" value="杭州市西湖区关河小区">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="input3" class="col-sm-2 col-form-label">到达时间</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="input3" value="2020.2.26日">
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="tabs" id="tab2">
+                                    <div class="form-group row">
+                                        <label for="address" class="col-sm-2 col-form-label">地址</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="address" value="杭州市西湖区关河小区">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tabs" id="tab3"></div>
+                                <div class="tabs" id="tab4">
+                                    <div class="table-div">
+                                        <table class="table table-bordered text-center">
+                                            <thead>
+                                            <tr>
+                                                <th>项目</th>
+                                                <th>具体内容</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>项目名称</td>
+                                                <td><input class="" type="text" value="寒风岭项目"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>填写人</td>
+                                                <td><input class="" type="text" value="潘淑红"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>设备名称</td>
+                                                <td><input class="" type="text" value="01号风机"><span class="plus" onclick="add()">+</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>今日工作计划</td>
+                                                <td><input class="" type="text" value="传感器安装调试10个"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>明天工作计划</td>
+                                                <td><input class="" type="text" value="剩余传感器安装完成"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="table-div">
+                                        <table class="table table-bordered text-center">
+                                            <thead>
+                                            <tr>
+                                                <th>项目</th>
+                                                <th>具体内容</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>项目名称</td>
+                                                <td><input class="" type="text" value="寒风岭项目"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>填写人</td>
+                                                <td><input class="" type="text" value="潘淑红"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>设备名称</td>
+                                                <td><input class="" type="text" value="01号风机"><span class="plus" onclick="add()">+</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>今日工作计划</td>
+                                                <td><input class="" type="text" value="传感器安装调试10个"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>明天工作计划</td>
+                                                <td><input class="" type="text" value="剩余传感器安装完成"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tabs" id="tab5">
+                                    <table class="table table-bordered text-center">
+                                        <thead>
+                                        <tr>
+                                            <th>项目</th>
+                                            <th>具体内容</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>项目名称</td>
+                                            <td><input class="" type="text" value="寒风岭项目"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>填写人</td>
+                                            <td><input class="" type="text" value="潘淑红"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>设备名称</td>
+                                            <td><input class="" type="text" value="01号风机"><span class="plus" onclick="add()">+</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>今日工作计划</td>
+                                            <td><input class="" type="text" value="传感器安装调试10个"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>明天工作计划</td>
+                                            <td><input class="" type="text" value="剩余传感器安装完成"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+{% endblock %}
+
+{% block javascripts %}
+     <script type="text/javascript">
+        $.ajaxSetup({
+            data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
+        })
+    </script>
+    <script type="text/javascript">
+        $(function() {
+            $('#PROJECT-WORKLOG').addClass('active');
+        });
+    </script>
+    <script src="{% static 'js/work_log.js' %}"></script>
+{% endblock %}

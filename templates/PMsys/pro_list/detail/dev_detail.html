@@ -1,0 +1,225 @@
+<!--项目列表详情-设备弹窗-->
+{% extends 'base_layer.html' %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dev_detail.css' %}">
+{% endblock %}
+{% block main %}
+<!--项目列表详情-设备-->
+    <div class="card-primary" id="dev-show">
+            <div class="card-body">
+                <form method="post" id="addForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="items" value="{{ request.session.item_id }}"> <!--风场的ID-->
+                    <input type="hidden" name="powerId" value="{{ item_power.id }}"> <!--风机的ID-->
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">风机名称</label>
+                        <div class="col-6">
+                            <input type="text" class="form-control" name="p_title" value="{{ item_power }}">
+                        </div>
+                        <div class="col-3">
+                            <label class="control-label">
+                                <input type="radio" class="iradio_minimal" name="status" value="True"
+                                {% ifequal item_power.status True %}checked{% endifequal %}>正常
+                            </label>
+                            <label class="control-label">
+                                <input type="radio" class="iradio_minimal" name="status" value="False"
+                                {% ifequal item_power.status False %}checked{% endifequal %}>异常
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">主机型号</label>
+                        <div class="col-9">
+                            <select class="form-control" name="windpower" id="dev-modal">
+                                <option value="">---</option>
+                                {% for power in windpowers %}
+                                <option value="{{ power.id }}" {% ifequal power  item_power.windpower %}selected{% endifequal %}>{{ power.manufacturer }} {{ power.title }} {{ power.height }} {{ power.tier }} {{ power.blade_length }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="tips-div" id="show-power">
+                            {% if item_power %}
+                                <b>主机厂：<span class="tips-text">{{ item_power.windpower.manufacturer }}</span></b>
+                                <b>机型：<span class="tips-text">{{ item_power.windpower.title }}</span></b>
+                                <b>塔筒高度：<span class="tips-text">{{ item_power.windpower.height }}</span></b>
+                                <b>塔筒节数：<span class="tips-text">{{ item_power.windpower.tier }}</span></b>
+                                <b>叶片长度：<span class="tips-text">{{ item_power.windpower.blade_length }}</span></b>
+                            {% else %}
+                                <b>主机厂：<span class="tips-text">-</span></b>
+                                <b>机型：<span class="tips-text">-</span></b>
+                                <b>塔筒高度：<span class="tips-text">-</span></b>
+                                <b>塔筒节数：<span class="tips-text">-</span></b>
+                                <b>叶片长度：<span class="tips-text">-</span></b>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">采集器1</label>
+                        <div class="col-9">
+                            <select  class="form-control" name="facility" id="col-modal-1">
+                                <option>---</option>
+                                {% for facility in facilitys %}
+                                    <option value="{{ facility.id }}" {% if facility in item_power.facilitys.all %}selected{% endif %}>{{ facility.get_modal_display}} {{ facility.title }} {{ facility.chanelnum }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="tips-div" id="show-col-1">
+                            {% if item_power %}
+                                <b>类型：<span class="tips-text">{{ item_power.facilitys.all.0.get_modal_display }}</span></b>
+                                <b>采集器型号：<span class="tips-text">{{ item_power.facilitys.all.0.title }}</span></b>
+                                <b>通道数：<span class="tips-text">{{ item_power.facilitys.all.0.chanelnum }}</span></b>
+                            {% else %}
+                                <b>类型：<span class="tips-text">-</span></b>
+                                <b>采集器型号：<span class="tips-text">-</span></b>
+                                <b>通道数：<span class="tips-text">-</span></b>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">采集器编号</label>
+                        <div class="col-4">
+                            <input class="form-control" type="text" name="f_title" value="{{ item_facility.f_title }}">
+                        </div>
+                        <label class="col-2 col-form-label">嵌入式版本</label>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="soft_version"  value="{{ item_facility.soft_version }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">IP地址</label>
+                        <div class="col-4">
+                            <input class="form-control" type="text" name="ip" value="{{ item_facility.ip }}">
+                        </div>
+                        <label class="col-2 col-form-label">硬件版本</label>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="hardware_version" value="{{ item_facility.hardware_version }}">
+                        </div>
+                    </div>
+                </form>
+                <div class="form-group row" id="col-1-td" data-id="10">
+                    {% for item_sensor in item_sensors %}
+                        <label class="col-2 col-form-label">{{ item_sensor.number }}</label>
+                        <input type="hidden" name="number" value="{{ item_sensor.number }}">
+                        <div class="col-3">
+                            <input class="form-control" type="text" placeholder="编号" name="s_title" value="{{ item_sensor.s_title }}">
+                        </div>
+                        <div class="col-3">
+                            <select  class="form-control" name="sensor">
+                                {% for sensor in sensors %}
+                                    <option value="{{ sensor.id }}" {% ifequal item_sensor.sensor sensor %}selected{% endifequal %}>{{ sensor.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" placeholder="位置" name="install_site" value="">
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                    <button type="button" id="btnSave" class="btn btn-primary btn-80">保存</button>
+                    <button type="button" id="btnCancel" class="btn btn-default btn-80">重置</button>
+            </div>
+
+    </div>
+
+    <div id="sensor-modal" style="display: none;">
+        <div class="col-3">
+            <input class="form-control" type="text" placeholder="编号" name="s_title" value="">
+        </div>
+        <div class="col-3">
+            <select  class="form-control" name="sensor">
+                {% for sensor in sensors %}
+                    <option value="{{ sensor.id }}">{{ sensor.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-3">
+            <input class="form-control" type="text" placeholder="位置" name="install_site" value="">
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $.ajaxSetup({
+            data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
+        });
+    </script>
+    <script>
+    $(document).ready(function () {
+            $('#dev-modal').change(function () {
+                let selcetVal = $('#dev-modal').val();
+                let selcetText = $('#dev-modal').find('option:selected').text().split(' ');
+                {#console.log(selcetText);#}
+                let html = `
+                            <b>主机厂：</b>${selcetText[0]}
+                            <b>机型：</b>${selcetText[1]}
+                            <b>塔筒高度：</b>${selcetText[2]}
+                            <b>塔筒节数：</b>${selcetText[3]}
+                            <b>叶片长度：</b>${selcetText[4]}
+                            `;
+                $('#show-power').html(null).html(html);
+            });
+            $('#col-modal-1').change(function () {
+                let selectId = $('#col-modal-1');
+                let selectText = selectId.find('option:selected').text().split(' ');
+                let html = `
+                            <b>类型：</b>${selectText[0]}
+                            <b>采集器型号：</b>${selectText[1]}
+                            <b>通道数：</b>${selectText[2]}
+                            `;
+                $('#show-col-1').html(null).html(html);
+                let sensorHtml = $('#sensor-modal').html();
+                let newHtml = '';
+                for (i=1; i<=parseInt(selectText[2]);i++){
+                    newHtml += `<label class="col-2 col-form-label">通道${i}</label>
+                            <input type="hidden" name="number" value="通道${i}">`+sensorHtml
+
+                }
+                $('#col-1-td').html(null).html(newHtml);
+
+                {#console.log(newHtml);#}
+            });
+        });
+        $('#btnSave').click(function () {
+            var data = $('#addForm').serialize();
+            var data_sensor_input = $('#col-1-td input');
+            var data_sensor_select = $('#col-1-td select');
+            console.log(data_sensor_input);
+            console.log(data_sensor_select);
+            var new_data = new Array();
+            var tmp = {};
+            for(i=1; i<=data_sensor_input.length; i++){
+                tmp[data_sensor_input[i-1].name] = data_sensor_input[i-1].value;
+                if(i%3==0){
+                    tmp['sensor'] = data_sensor_select[new_data.length].value
+                    new_data.push(tmp);
+                    tmp = {}
+                }
+            }
+            console.log(data);
+            console.log(JSON.stringify(new_data));
+            data = data+'&sensors='+JSON.stringify(new_data);
+            $.ajax({
+                type:'post',
+                url:'{% url 'list-show:dev_detail' %}',
+                data:data,
+                success:function (msg) {
+                    if(msg.result=='sussecc'){
+                        layer.alert('数据保存成功！', {icon: 1}, function (index) {
+                           parent.layer.closeAll();
+                       });
+                    }else if(msg.result=='fail'){
+                       layer.alert(msg.message, {icon: 5});
+                   }
+                }
+            });
+            {#console.log(data);#}
+        });
+
+    </script>
+{% endblock %}

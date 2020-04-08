@@ -1,0 +1,208 @@
+{% extends 'base_left.html' %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/iconfont.css' %}">
+<link rel="stylesheet" href="{% static 'css/pro_list.css' %}">
+{% endblock %}
+{% block content %}
+<!--项目列表-->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">项目列表</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#"><i class="fas fa-tachometer-alt"></i> Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'project' %}">项目列表</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <!-- COLOR PALETTE -->
+        <div class="card card-default color-palette-box">
+            <div class="card-header">
+                <span class="card-title">
+                    所有项目一览表
+                </span>
+                <div class="btns">
+                    <button class="btn  btn-outline-primary" type="button" data-type="1" id="show_1">未开工</button>
+                    <button class="btn  btn-outline-primary" type="button" data-type="2" id="show_2">安装中</button>
+                    <button class="btn  btn-outline-primary" type="button" data-type="3" id="show_3">维护中</button>
+                    <button class="btn  btn-outline-primary" type="button" data-type="4" id="show_4">质保内</button>
+                    <button class="btn  btn-outline-primary" type="button" data-type="5" id="show_5">过保</button>
+                    <button class="btn  btn-outline-primary" type="button" data-type="6" id="show_6">待维护</button>
+                    <button class="btn  btn-outline-primary" type="button" data-type="" id="show_">全部</button>
+                </div>
+                <div class="right-block">
+                    <div class="input-group">
+                        <input type="text" class="form-control rounded-0">
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-default btn-flat"><i class="iconfont icon-sousuo"></i></button>
+                  </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-body pb-0">
+                    <div class="row d-flex align-items-stretch">
+                    {{ status }}
+                        {% for item in data %}
+                            <div class="col-12 col-sm-6 col-md-3 d-flex align-items-stretch">
+                                <div class="card bg-light" style="width: 100%">
+                                    {% if item.item_type == 1 %}
+                                        <div class="card-header text-muted border-bottom-0">
+                                            风电项目
+                                        </div>
+                                    {% elif item.item_type == 2 %}
+                                        <div class="card-header text-muted border-bottom-0">
+                                            火电项目
+                                        </div>
+                                    {% endif %}
+                                    <div class="card-body pt-0">
+                                        <div class="row">
+                                            <div class="col-7">
+                                                <h2 class="lead"><b>{{ item.name }}</b></h2>
+                                                <div class="state-block" >
+                                                    {% if item.status == 1 %}
+                                                        <span  class="state-name">未开工</span>
+                                                    {% elif item.status == 2 %}
+                                                        <span  class="state-name">安装中</span>
+                                                    {% elif item.status == 3 %}
+                                                        <span  class="state-name">维护中</span>
+                                                    {% elif item.status == 4 %}
+                                                        <span  class="state-name">质保内</span>
+                                                    {% elif item.status == 5 %}
+                                                        <span  class="state-name">过保</span>
+                                                    {% elif item.status == 6 %}
+                                                        <span  class="state-name">待维护</span>
+                                                    {% endif %}
+                                                    <i class="iconfont icon-xialakuang1"></i>
+                                                    <div class="state-list" data-cardId="{{ item.id }}">
+                                                        <div class="state-li" data-state="1">未开工</div>
+                                                        <div class="state-li" data-state="2">安装中</div>
+                                                        <div class="state-li" data-state="3">维护中</div>
+                                                        <div class="state-li" data-state="4">质保内</div>
+                                                        <div class="state-li" data-state="5">过保</div>
+                                                        <div class="state-li" data-state="6">待维护</div>
+                                                    </div>
+                                                </div>
+                                                <p class="text-muted text-sm">
+                                                    <i class="fas fa-lg iconfont icon-biaoqian1"></i>
+                                                    {% for manufacturer in item.manufacturers.all  %}
+                                                        <span class="pro_span">{{ manufacturer }}</span>
+                                                    {% endfor %}
+                                                </p>
+                                            </div>
+                                            <div class="img-block text-center">
+                                                <img src="{% static 'img/timg.png' %}" alt="" class="img-circle img-fluid">
+                                            </div>
+                                            <ul class="ml-4 mb-0 fa-ul text-muted address-block">
+                                                <li class="small">
+                                                    <i class="iconfont icon-biaoqian"></i>
+                                                    {% for itemfacility in itemfacilitys %}
+                                                        {% if item == itemfacility.itempower.items  and forloop.first%}
+                                                            <span class="series-span">{{ itemfacility.facilitys.get_modal_display }}</span>
+                                                        {% endif %}
+                                                    {% endfor %}
+{#                                                    <span class="series-span">螺栓</span><span class="series-span">倾覆</span><span class="series-span">倾角</span>#}
+                                                </li>
+                                                <li class="small"><i class="iconfont icon-dingwei icon-blue"></i>{{ item.address }}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="text-center">
+                                            <a href="{% url 'list-show:dev' %}?id={{ item.id }} " class="btn btn-sm btn-primary">
+                                                查看详情
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{% static 'js/layer/layer.js' %}"></script>
+    <script>
+        $.ajaxSetup({
+            data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
+        });
+        $(function () {
+            $('#PROJECT-LIST').addClass('active');
+        })
+    </script>
+    {% block scripts %}
+    <script type="text/javascript">
+        $(function() {
+            let chooseState="0";
+
+            $('#{{ request.session.status |default:'show_' }}').addClass('active');
+            $(document).click(function () {
+                $('.state-list').hide();
+            });
+            $('.state-name').click(function (e) {
+                stopPropagation(e);
+                $(this).parent('.state-block').find('.state-list').show();
+            });
+            $('.state-li').click(function (e) {
+                stopPropagation(e);
+                let cardId = $(this).parent('.state-list').attr('data-cardId');
+                let val = $(this).attr('data-state');
+                {#alert(chooseState);#}
+                let params={
+                    id: cardId,
+                    status: val,
+                };
+                $.ajax({
+                    type: 'POST',
+                    data: params,
+                    cache: false,
+                    success: function (msg) {
+                        console.log(msg);
+                        window.location.reload();
+                    }
+                });
+            });
+            // 获取按键状态
+            $('.btns button').click(function () {
+                chooseState=$(this).attr('data-type');
+                $(this).addClass('btn-active').siblings().removeClass('btn-active');
+            let params={
+                    show: chooseState,
+                };
+            $.ajax({
+                type: 'POST',
+                data: params,
+                cache: false,
+                success: function (msg) {
+                    console.log(msg);
+                    window.location.reload();
+                }
+            });
+            })
+        });
+        function stopPropagation(e) {
+            var ev = e || window.event;
+            if (ev.stopPropagation) {
+                ev.stopPropagation();
+            }
+            else if (window.event) {
+                window.event.cancelBubble   = true;//兼容IE
+            }
+        }
+    </script>
+    {% endblock %}
+{% endblock %}

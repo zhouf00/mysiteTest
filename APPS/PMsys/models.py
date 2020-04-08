@@ -135,6 +135,11 @@ class WindPower(BaseModel):
         verbose_name_plural = verbose_name
 
 
+def upload_path(instance, filename):
+    print(instance.items, filename)
+    return '/'.join([str(instance.items), filename])
+
+
 class ItemsFiles(BaseModel):
     """项目文件表"""
 
@@ -146,8 +151,10 @@ class ItemsFiles(BaseModel):
     )
     items = models.ForeignKey('Items', on_delete=models.CASCADE)
     title = models.CharField(max_length=32, verbose_name='文件名字')
-    type = models.SmallIntegerField(choices=FILE_TYPE_CHOICE, verbose_name='文件类型')
-    path = models.FileField(verbose_name='文件位置')
+    type = models.SmallIntegerField(choices=FILE_TYPE_CHOICE, null=True, blank=True, verbose_name='文件类型')
+    file = models.FileField(upload_to=upload_path, unique=True, verbose_name='文件位置')
+    memo = models.TextField(null=True, blank=True, verbose_name='备注')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='填写人')
 
     class Meta:
         verbose_name = '项目文件'
@@ -166,10 +173,12 @@ class ItemsImage(BaseModel):
 
 
 class ItemTrip(BaseModel):
+    """交通表"""
     items = models.ForeignKey('Items', on_delete=models.CASCADE)
     direction = models.SmallIntegerField(default=0, verbose_name='出行方向')
     city = models.CharField(max_length=32, verbose_name='城市')
     percept = models.TextField(verbose_name='方案')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='填写人')
 
     # percept = HTMLField(verbose_name='方案详情')
 
@@ -182,11 +191,30 @@ class ItemStay(BaseModel):
 
     items = models.ForeignKey('Items', on_delete=models.CASCADE)
     hoteltitle = models.CharField(max_length=32, verbose_name='酒店名称')
-    hosteladdress = models.CharField(max_length=64, verbose_name='酒店地址')
+    hoteladdress = models.CharField(max_length=64, verbose_name='酒店地址')
     telephone = models.CharField(max_length=15, verbose_name='酒店电话')
+    memo = models.TextField(null=True, blank=True, verbose_name='备注说明')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='填写人')
 
     class Meta:
         verbose_name = '住宿表'
+        verbose_name_plural = verbose_name
+
+
+class ItemExplain(BaseModel):
+
+    EXP_TYPE_CHOICE = (
+        (1, '工具借用'),
+        (2, '其它')
+    )
+
+    items = models.ForeignKey('Items', on_delete=models.CASCADE)
+    type = models.SmallIntegerField(choices=EXP_TYPE_CHOICE, verbose_name='文件类型')
+    content = models.TextField(verbose_name='内容')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='填写人')
+
+    class Meta:
+        verbose_name = '工具借用'
         verbose_name_plural = verbose_name
 
 
@@ -337,15 +365,19 @@ class SensorType(BaseModel):
 
 class ItemGoods(BaseModel):
     """发货信息"""
-    item = models.ForeignKey('Items', on_delete=models.CASCADE)
-    operator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='发货人')
+    items = models.ForeignKey('Items', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='发货人')
+    memo = models.TextField(verbose_name='发货说明')
 
+def upload_path_image(instance, filename):
+    # print(instance.items, filename)
+    return '/'.join([str(instance.goods.items),'img', filename])
 
 class GoodsImage(BaseModel):
     """发货图片"""
 
     goods = models.ForeignKey('ItemGoods', on_delete=models.CASCADE)
-    image = models.ImageField(verbose_name='发货图片')
+    image = models.ImageField(upload_to=upload_path_image, verbose_name='发货图片')
 
 
 class Personnel(BaseModel):

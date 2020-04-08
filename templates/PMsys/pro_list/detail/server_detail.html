@@ -1,0 +1,338 @@
+<!--项目列表详情-项目相关-->
+{% extends 'PMsys/pro_list/pro_list_info.html' %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/server_detail.css' %}">
+{% endblock %}
+{% block cardbody %}
+<!--项目列表详情-服务器-->
+<div class="card-body pb-0">
+    <button class="btn btn-primary btn-add" data-toggle="modal" data-target="#add-modal">新建</button>
+    <div class="row d-flex align-items-stretch">
+        {% for pc in data %}
+            <div class="col-12 col-sm-6 col-md-3 d-flex align-items-stretch">
+                <div class="card bg-light card-block" id="server_{{ pc.id }}">
+                    <div class="card-header text-muted border-bottom-0 header-block">
+                        <img class="server-img" src="{% static 'img/server.png' %}">
+                        <span class="server-name">{{ pc.get_server_type_display }} {{ pc.server_model }}</span>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="info">
+                            <span>CPU</span>
+                            <span>{{ pc.cpu }}</span>
+                        </div>
+                        <div class="info">
+                            <span>内存</span>
+                            <span>{{ pc.ram }}G</span>
+                        </div>
+                        <div class="info">
+                            <span>硬盘类型</span>
+                            <span>{{ pc.get_disk_type_display }}</span>
+                        </div>
+                        <div class="info">
+                            <span>硬盘容量</span>
+                            <span>{{ pc.disk_size }}T</span>
+                        </div>
+                        <div class="info">
+                            <span>硬盘数量</span>
+                            <span>{{ pc.disk_count }}</span>
+                        </div>
+                        <div class="info">
+                            <span>硬盘阵列</span>
+                            <span>{{ pc.get_raid_type_display }}</span>
+                        </div>
+                        <div class="info">
+                            <span>网卡1</span>
+                            <span>{{ pc.nic1 }}</span>
+                        </div>
+                        {% if pc.nic2 %}
+                            <div class="info">
+                                <span>网卡2</span>
+                                <span>{{ pc.nic2 }}</span>
+                            </div>
+                        {% endif %}
+                        {% if pc.nic3 %}
+                            <div class="info">
+                                <span>网卡3</span>
+                                <span>{{ pc.nic3 }}</span>
+                            </div>
+                        {% endif %}
+                        {% if pc.nic4 %}
+                            <div class="info">
+                                <span>网卡4</span>
+                                <span>{{ pc.nic4 }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="info">
+                            <span>软件版本</span>
+                            <span>{{ pc.soft_release }}</span>
+                        </div>
+                        <div class="info">
+                            <span>用户名</span>
+                            <span>{{ pc.pc_username }}</span>
+                        </div>
+                        <div class="info">
+                            <span>密码</span>
+                            <span>{{ pc.pc_passwd }}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-center">
+                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#add-modal" data-ti="server_{{ pc.id }}" data-id="{{ pc.id }}">
+                                修改
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<!--弹窗-->
+<div class="modal fade server-modal" id="add-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="title">新建</span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="server" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="item" value="{{ request.session.item_id }}">
+                    <input type="hidden" name="id" id="id">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">类型</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" name="server_type" id="server_type">
+                                        <option value='1'>浏览站</option>
+                                        <option value='2'>塔式服务器</option>
+                                        <option value='3'>柜式服务器</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">型号</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="server_model" id="server_model">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">CPU</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="cpu" id="cpu">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">内存</label>
+                                <div class="col-sm-9" style="position: relative">
+                                    <input type="text" class="form-control" name="ram" id="ram" style="width: 90%">
+                                    <span class="unit" style="position: absolute;right: 0;top: 6px;">G</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">硬盘类型</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" name="disk_type" id="disk_type">
+                                        <option value="1">SAS</option>
+                                        <option value="2">SATA</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">硬盘容量</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="disk_size" id="disk_size">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">硬盘数量</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="disk_count" id="disk_count">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">硬盘阵列</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" name="raid_type" id="raid_type">
+                                        <option value="0">RAID0</option>
+                                        <option value="1">RAID1</option>
+                                        <option value="5">RAID5</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">网卡1</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="nic1" id="nic1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">网卡2</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="nic2" id="nic2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">网卡3</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="nic3" id="nic3">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">网卡4</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="nic4" id="nic4">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">软件版本</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="soft_release" id="soft_release">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">用户名</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="pc_username" id="pc_username">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">密码</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="pc_passwd" id="pc_passwd">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer footer-center">
+                <button id="btnSave" type="button" class="btn btn-primary">保存</button>
+                <button id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('#LIST-SERVER').addClass('btn-primary');
+
+        $('.card-footer button').click(function () {
+            $('.server-modal .modal-title').html('修改');
+            let data = $(this).attr('data-id');
+            let params={
+                    serverid: data,
+                };
+            $.ajax({
+               data: params,
+               cache: false,
+               success: function (msg) {
+                   console.log(msg.data);
+                   $('#id').val(msg.data.id);
+                   $('#server_type').val(msg.data.server_type);
+                   $('#server_model').val(msg.data.server_model);
+                   $('#cpu').val(msg.data.cpu);
+                   $('#ram').val(msg.data.ram);
+                   $('#disk_type').val(msg.data.disk_type);
+                   $('#disk_size').val(msg.data.disk_size);
+                   $('#disk_count').val(msg.data.disk_count);
+                   $('#raid_type').val(msg.data.raid_type);
+                   $('#soft_release').val(msg.data.soft_release);
+                   $('#nic1').val(msg.data.nic1);
+                   $('#nic2').val(msg.data.nic2);
+                   $('#nic3').val(msg.data.nic3);
+                   $('#nic4').val(msg.data.nic4);
+                   $('#pc_username').val(msg.data.pc_username);
+                   $('#pc_passwd').val(msg.data.pc_passwd);
+
+                   return ;
+               }
+            });
+        });
+        $('.btn-add').click(function () {
+            $('.server-modal .modal-title').html('新建');
+        })
+    })
+</script>
+<script>
+        $('#btnSave').click(function () {
+        var data = $('#server').serialize();
+        console.log(data);
+        $.ajax({
+           type: $('#server').attr('method'),
+           url: "{% url 'list-show:server' %}",
+           data: data,
+           cache: false,
+           success: function (msg) {
+               if(msg.result=='success'){
+                    {#window.location.reload();#}
+               }else if(msg.result=='fail'){
+                    {#console.log(msg);#}
+                    alert(msg.itemform_errors, {icon: 5});
+               }
+               return ;
+           }
+        });
+    });
+    /*点取消刷新新页面*/
+    $("#btnCancel").click(function () {
+	    window.location.reload();
+
+    });
+</script>
+{% endblock %}
+
