@@ -8,7 +8,8 @@ from utils.mixin_utils import LoginRequiredMixin
 from rbac.models import Menu, Role
 from system.models import SystemSetup
 from PMsys import models as pms
-from PMsys.forms import ItemForm
+from PMsys.forms import ItemForm, PersonForm
+
 
 User = get_user_model()
 # Create your views here.
@@ -27,11 +28,78 @@ class ProjectOverView(LoginRequiredMixin, View):
         ret = Menu.getMenuByRequestUrl(url=request.path_info)   # 检查路径是否授权
         ret.update(SystemSetup.getSystemSetupLastData())
         # fields = ['id', 'item', 'user', 'create_time', 'status']
-        data = [{'name': '张三', 'x':'120.360389', 'y':'30.283525', 'status':'途中'},]
-
-        ret['data'] = json.dumps(data)
+        # data = [{'id': 123456, 'facName': "茶山", 'name': "李四", 'address': "宁波", 'status': 3,'begintime': '2020-4-1'},
+        #          {'id': 123456, 'facName': "寒风岭", 'name': "小二", 'address': "大同", 'status': 2,'begintime': '2020-4-1'},
+        #          {'id': 123456, 'facName': "茶山", 'name': "王五", 'address': "宁波", 'status': 3,'begintime': '2020-4-1'},
+        #          {'id': 123456, 'facName': "寒风岭", 'name': "张三", 'address': "大同", 'status': 2,'begintime': '2020-4-1'},
+        #          {'id': 123456, 'facName': "公司", 'name': "小甲", 'address': "杭州", 'status': 1,'begintime': '2020-4-1'},
+        #          ]
+        data = pms.PersonTrack.objects.all()
+        ret['data'] = data
 
         return render(request, 'PMsys/pro_overview/pro_overview.html', ret)
+
+
+class ProjectOverDetailView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        if 'id' in request.GET and request.GET['id']:
+            # data = {'id': 123456, 'items': "国电茶山风电场", 'name': "李四", 'address': "宁波", 'status': 3, 'begintime': '2020-4-1'}
+            data = pms.PersonTrack.objects.filter(pk=int(request.GET['id']))[0]
+        else:
+            data = {}
+        items_list = pms.Items.objects.all()
+        ret = {
+            'person': data,
+            'items_list':items_list,
+        }
+        return render(request, 'PMsys/pro_overview/pro_overview_detail.html', ret)
+
+    def post(self, request):
+        if 'id' in request.POST and request.POST['id']:
+            persontrack = get_object_or_404(pms.PersonTrack, pk=request.POST.get('id'))
+        else:
+            persontrack = pms.PersonTrack()
+        person_form = PersonForm(request.POST, instance=persontrack)
+        # print(person_form)
+        if person_form.is_valid():
+            person_form.save()
+            ret = {
+                'result': 'sussecc',
+                'msg': '保存成功'
+            }
+        else:
+            pattern = '<li>.*?<ul class=.*?><li>(.*?)</li>'
+            errors = str(person_form.errors)
+            explainform_errors = re.findall(pattern, errors)
+            ret = {
+                'result': 'fail',
+                'msg': explainform_errors[0]
+            }
+        return HttpResponse(json.dumps(ret), content_type='application/json')
+
+
+class ProjectOverGetdataView(LoginRequiredMixin, View):
+
+    def post(self, request):
+        fields = ['items__name', 'items__x', 'items__y', 'name', 'status']
+        data = list(pms.PersonTrack.objects.values(*fields))
+        ret = {
+            'data':data
+        }
+        if ret['data']:
+            for var in ret['data']:
+                for tmp in ret['data']:
+                    if var != tmp:
+                        if var['items__name'] == tmp['items__name']:
+                            var['name'] = var['name'] + ','+ tmp['name']
+                            ret['data'].remove(var)
+                            ret['data'].remove(tmp)
+                            ret['data'].append(var)
+        else:
+            ret['data'] = [{}]
+        # print(ret['data'])
+        return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 class ProjectListView(LoginRequiredMixin, View):
@@ -77,15 +145,15 @@ class ProjectNewView(LoginRequiredMixin, View):
         return render(request, 'PMsys/new_pro/new_pro.html', ret)
 
     def post(self, request):
-        print(request.POST)
+        # print(request.POST)
         item_form = ItemForm(request.POST)
-        print(item_form)
+        # print(item_form)
         if item_form.is_valid():
             item_form.save()
             ret = {'status': 'success'}
-            print('保存成功')
+            # print('保存成功')
         else:
-            print('保存失败')
+            # print('保存失败')
             pattern = '<li>.*?<ul class=.*?><li>(.*?)</li>'
             errors = str(item_form.errors)
             itemform_errors = re.findall(pattern, errors)
@@ -105,8 +173,8 @@ class ProjectWorklogView(LoginRequiredMixin, View):
 
     def post(self, request):
         a = request.POST
-        print(a.get('proName'))
-        print(a['state'])
+        # print(a.get('proName'))
+        # print(a['state'])
         ret = {
             'msg': 'abc'
         }

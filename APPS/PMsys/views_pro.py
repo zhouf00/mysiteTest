@@ -8,12 +8,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from utils.mixin_utils import LoginRequiredMixin
 from PMsys.forms import ItemFileForm, StayForm, TripForm, ExplainForm
 from PMsys import models as pms
-
-from mysiteTest.settings import MEDIA_ROOT
+from django.conf import settings
 
 
 class ProcedureView(LoginRequiredMixin, View):
-
+    """入场手续"""
     def get(self, request):
         # print(request.GET)
         fields = ['id', 'create_time', 'items__name', 'title', 'file', 'memo', 'user__name']
@@ -40,7 +39,7 @@ class ProcedureView(LoginRequiredMixin, View):
         if file_form.is_valid():
             dir = str(file_form.cleaned_data['items'])
             file = str(file_form.cleaned_data['file'])
-            newfile = os.path.join(MEDIA_ROOT, dir, file)
+            newfile = os.path.join(settings.MEDIA_ROOT, dir, file)
             if os.path.exists(newfile):
                 ret['result'] = 'fail'
                 ret['msg'] = '<%s>文件已经存在，不要重复上传'%file
@@ -55,6 +54,7 @@ class ProcedureView(LoginRequiredMixin, View):
 
 
 class StayView(LoginRequiredMixin, View):
+    """住宿方式"""
 
     def get(self, request):
         fields = ['id', 'create_time', 'items__name', 'hoteltitle', 'hoteladdress',
@@ -88,6 +88,7 @@ class StayView(LoginRequiredMixin, View):
 
 
 class TripView(LoginRequiredMixin, View):
+    """通勤方式"""
 
     def get(self, request):
         fields = ['id', 'create_time', 'items__name', 'direction', 'city',
@@ -130,6 +131,7 @@ class TrafficView(LoginRequiredMixin, View):
 
 
 class ExplainView(LoginRequiredMixin, View):
+    """工具借用"""
 
     def get(self, request):
         fields = ['id', 'create_time', 'items__name', 'type', 'content',
@@ -173,7 +175,7 @@ class FileDeleteView(LoginRequiredMixin, View):
             d_file = d_file[0]
             d_file.delete()
             d_file_name = str(d_file.file)
-            d_file_name = os.path.join(MEDIA_ROOT, d_file_name)
+            d_file_name = os.path.join(settings.MEDIA_ROOT, d_file_name)
             if os.path.exists(d_file_name):
                 os.remove(d_file_name)
             ret = {

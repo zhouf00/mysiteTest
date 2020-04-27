@@ -10,6 +10,9 @@ class ItemForm(forms.ModelForm):
         fields = ['id','item_type', 'name', 'x', 'y', 'status', 'address', 'telephone', 'manufacturers',
                  ]
         error_messages = {
+            'name': {'required': '项目名称不能为空'},
+            'x': {'required': '纬度不能为空'},
+            'y': {'required': '经度不能为空'},
             'telephone': {'required': '手机号码不能为空',
                        'max_length': '输入有效的手机号码',
                        'min_length': '输入有效的手机号码'}
@@ -141,4 +144,20 @@ class ImageForm(forms.ModelForm):
         model = pms.GoodsImage
         fields = ['goods', 'image']
 
+
+class LinkForm(forms.ModelForm):
+
+    class Meta:
+        model = pms.ItemLinkman
+        fields = ['items','name', 'befirm', 'post', 'phone', 'status']
+
+
+class PersonForm(forms.ModelForm):
+
+    class Meta:
+        model = pms.PersonTrack
+        fields = ['items', 'name', 'begintime', 'status']
+        error_messages = {
+            'begintime': {'invalid': '请确认时间格式yyyy-mm-dd'},
+        }
 

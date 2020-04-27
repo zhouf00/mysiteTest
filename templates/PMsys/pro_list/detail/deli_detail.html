@@ -3,34 +3,89 @@
 {% load staticfiles %}
 
 {% block css %}
-
+<link rel="stylesheet" href="{% static 'css/deli_detail.css' %}">
 {% endblock %}
 {% block cardbody %}
 <!--项目列表详情-库存发货-->
-    {% for good in item_goods %}
-        <ul>
-            <li>
-                <span>{{ good.user }}</span>
-                <span>{{ good.create_time }}</span><br>
-                <span>{{ good.memo }}</span>
-            </li>
-        </ul>
-        <div>
-            {% for image in goods_image %}
-                {% if image.goods == good %}
-                    <img src="/media/{{ image.image }}" alt="">
-                {% endif %}
-            {% endfor %}
+<div class="sections">
+    <div class="blockOuter">
+        <div class="block">
+            <p class="title">发货记录</p>
+            {% if item_goods %}
+                {% for good in item_goods %}
+                    <ul class="deli_list">
+                        <li class="deli_li">
+                            <div>
+                                {% for image in goods_image %}
+                                    {% if image.goods == good%}
+                                    <div class="img">
+                                        <img src="/media/{{ image.image }}" alt="" onclick="showPig(this)">
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div>
+                                <span>{{ good.user }}</span>
+                                <span>{{ good.create_time }}</span>
+                                <span class="tips">{{ good.memo }}</span>
+                            </div>
+                        </li>
+                    </ul>
+                {% endfor %}
+            {% else %}
+                <ul class="deli_list">
+                    暂无发货信息
+                </ul>
+            {% endif %}
         </div>
-    {% endfor %}
-    <form id="DeliForm" method="post">
+        <div class="block2">
+            <p class="title">风场撤离库存记录</p>
+            {% if item_inventory %}
+                {% for good in item_inventory %}
+                    <ul class="deli_list">
+                        <li class="deli_li">
+                            <div>
+                                {% for image in goods_image %}
+                                    {% if image.goods == good %}
+                                        <div class="img">
+                                            <img src="/media/{{ image.image }}" alt="" onclick="showPig(this)">
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div>
+                                <span>{{ good.user }}</span>
+                                <span>{{ good.create_time }}</span>
+                                <span class="tips">{{ good.memo }}</span>
+                            </div>
+                        </li>
+                     </ul>
+                {% endfor %}
+            {% else %}
+                <ul class="deli_list">
+                    暂无库存信息
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    <form id="DeliForm" method="post" class="text-block">
         <input type="hidden" id="items" value="{{ request.session.item_id }}">
         <input type="hidden" id="user" value="{{ request.user.id }}">
         {% csrf_token %}
         <textarea class="form-control" id="memo" placeholder="发货说明"></textarea>
+        <select  id="type">
+            <option value="1">发货记录</option>
+            <option value="2">库存记录</option>
+        </select>
         <input type="file" name="myfiles" id="myfiles" multiple="">
         <button type="button" class="btn btn-primary btn-send" id="deliSave">保存</button>
     </form>
+</div>
+
+<!--放大的图片-->
+    <div id="outerdiv">
+        <img id="bigimg"  src="" />
+    </div>
 {% endblock %}
 
 {% block scripts %}
@@ -45,6 +100,7 @@
             let files = $('#myfiles')[0].files;
             formData.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
             formData.append('items', $('#items').val());
+            formData.append('type', $('#type').val());
             formData.append('user', $('#user').val());
             formData.append('memo', $('#memo').val());
             for(i=0;i<files.length;i++){
@@ -67,5 +123,13 @@
                 }
             });
         });
+        $("#outerdiv").click(function(){
+            $(this).css('display','none');
+        });
+        function showPig(event){
+            let src = $(event).attr('src');
+            $('#outerdiv').css('display','flex');
+            $('#bigimg').attr('src',src);
+        }
     </script>
 {% endblock %}

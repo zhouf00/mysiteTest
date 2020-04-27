@@ -49,10 +49,12 @@ urlpatterns = [
 
     url(r'^project/$', pmsys_views.ProjectView.as_view(), name='project'),
     url(r'^project/pro_over/$', pmsys_views.ProjectOverView.as_view(), name='pro_over'),
+    url(r'^project/pro_over/data$', pmsys_views.ProjectOverGetdataView.as_view(), name='pro_over_data'),
+    url(r'project/pro_over/detail$',pmsys_views.ProjectOverDetailView.as_view(), name='pro_over_detail'),
     url(r'^project/pro_list/$', pmsys_views.ProjectListView.as_view(), name='pro_list'),
     url(r'^project/pro_list/show/', include(('PMsys.urls', 'list-show'), namespace='list-show')),
     url(r'^project/new_pro/$', pmsys_views.ProjectNewView.as_view(), name='new_pro'),
     url(r'^project/work_log/$', pmsys_views.ProjectWorklogView.as_view(), name='work_log'),
     url(r'^project/facilities/$', pmsys_views.ProjectFacilities.as_view(), name='pro_facil'),
     url(r'^project/facilities/show/', include(('PMsys.urls', 'facil-show'), namespace='facil-show')),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

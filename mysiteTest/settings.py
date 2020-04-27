@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'django_crontab',   # linux下使用
     'crispy_forms',
     'xadmin',
     'tinymce',  # 富文本编辑器
@@ -98,6 +99,8 @@ WSGI_APPLICATION = 'mysiteTest.wsgi.application'
 #         'NAME': os.path.join(BASE_DIR, 'APPS/db.sqlite3'),
 #     }
 # }
+
+# 开发用数据库
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -108,6 +111,18 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+# 部署用数据库
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'windit_test',
+#         'HOST': 'db',
+#         'USER': 'root',
+#         'PASSWORD': 'test',
+#         'PORT': '3306',
+#     }
+# }
 
 
 # Password validation
@@ -170,3 +185,8 @@ SAFE_URL = [r'^/$',
             '/media/',
             '/xadmin/',
             ]
+
+# linux下的任务添加计划
+# CRONJOBS = (
+#     ('2 0 * * *', 'APPS.utils.tools.rendom_pwd.pwdlist', '>>'+os.path.join(BASE_DIR, 'APPS', 'utils', 'tools','pwd.log')),
+# )

@@ -8,9 +8,10 @@
 {% block cardbody %}
 <!--项目列表详情-人员联系表-->
 <div class="card-body person-card">
+    <input type="hidden" id="items" value="{{ request.session.item_id }}">
     <div class="control-btns">
         <button class="btn btn-primary btn-add" id="addRow">新建</button>
-        <button class="btn btn-primary btn-add">保存</button>
+{#        <button class="btn btn-primary btn-add" id="btnSave">保存</button>#}
     </div>
     <div class="tabs">
         <table class="table table-bordered text-center" id="table">
@@ -21,23 +22,44 @@
                 <th>厂家名称</th>
                 <th>职务</th>
                 <th>电话</th>
+                <th>状态</th>
+                <th>操作</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td><input class="" type="text" value="1"></td>
-                <td><input class="" type="text" value="陈丽珊"></td>
-                <td><input class="" type="text" value="寒风岭风场"></td>
-                <td><input class="" type="text" value="办公室主任"></td>
-                <td><input class="" type="text" value="18888888888"></td>
-            </tr>
-            <tr>
-                <td><input class="" type="text" value="2"></td>
-                <td><input class="" type="text" value="陈丽珊"></td>
-                <td><input class="" type="text" value="寒风岭风场"></td>
-                <td><input class="" type="text" value="办公室主任"></td>
-                <td><input class="" type="text" value="18888888888"></td>
-            </tr>
+                {% if data %}
+                    {% for person in data %}
+                        <tr id="tab-{{ forloop.counter }}">
+                            <input type="hidden" value="{{ person.id }}">
+                            <td>{{ forloop.counter }}</td>
+                            <td><input type="text" value="{{ person.name }}"></td>
+                            <td><input type="text" value="{{ person.befirm }}"></td>
+                            <td><input type="text" value="{{ person.post }}"></td>
+                            <td><input type="text" value="{{ person.phone }}"></td>
+                            <td><select>
+                                <option value="1" {% ifequal person.status 1 %}selected{% endifequal %}>在岗</option>
+                                <option value="2" {% ifequal person.status 2 %}selected{% endifequal %}>休假</option>
+                                <option value="3" {% ifequal person.status 3 %}selected{% endifequal %}>离职</option>
+                            </select></td>
+                            <td><button title='保存' onclick='doSave("tab-{{ forloop.counter }}")' ><i class='fas fa-pencil-alt'></i></button></td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr id="tab-1">
+                        <input type="hidden" value="">
+                        <td>{{ forloop.counter }}</td>
+                        <td><input type="text" value="张三(示例)"></td>
+                        <td><input type="text" value="金风科技(示例)"></td>
+                        <td><input type="text" value="主任(示例)"></td>
+                        <td><input type="text" value="13550510001"></td>
+                        <td><select>
+                            <option value="1">在岗</option>
+                            <option value="2">休假</option>
+                            <option value="3">离职</option>
+                        </select></td>
+                        <td><button title='保存' onclick='doSave("tab-1")' ><i class='fas fa-pencil-alt'></i></button></td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
@@ -50,16 +72,43 @@
         $('#LIST-PERSON').addClass('btn-primary');
         $('#addRow').click(function () {
             let num = Number($('#table tbody tr').length +1);
-            let html = `<tr>
-                 <td><input class="" type="text" value=${num}></td>
+            let html = `<tr id='tab-${num}'>
+                <input type="hidden" value="">
+                 <td>${num}</td>
                 <td><input class="" type="text" value=""></td>
                 <td><input class="" type="text" value=""></td>
                <td><input class="" type="text" value=""></td>
                <td><input class="" type="text" value=""></td>
+               <td><select>${$('#table tbody select').html()}</select></td>
+               <td><button title='保存' onclick='doSave("tab-${num}")' ><i class='fas fa-pencil-alt'></i></button></td>
                </tr>`;
             $('#table tbody').append(html)
-        })
-    })
+        });
+    });
+    function doSave(id) {
+        var inputs = $('#'+id+ ' input');
+        var data = {'status': $('#'+id+ ' select').val(), 'items': $('#items').val()};
+        var title = ['id', 'name', 'befirm', 'post', 'phone'];
+        for (var i=0; i<inputs.length; i++) {
+            data[title[i]] = inputs[i].value;
+        }
+        console.log(inputs);
+        console.log(data);
+        $.ajax({
+            type:'post',
+            url:'{% url 'list-show:person' %}',
+            data:data,
+            success:function (msg) {
+                if(msg.result == 'success'){
+                   layer.alert('数据保存成功！', {icon: 1}, function (index) {
+                       parent.layer.closeAll();
+                   });
+               }else if(msg.result=='fail'){
+                   layer.alert(msg.msg, {icon: 5});
+               }
+            }
+        });
+    }
 </script>
 
 {% endblock %}

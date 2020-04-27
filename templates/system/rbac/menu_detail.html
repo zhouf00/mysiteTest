@@ -39,7 +39,7 @@
                         <label class="col-sm-2 control-label">父菜单</label>
                         <div class="col-sm-3">
                             <select name="parent" class="form-control select2">
-                                <option class="selected" value="{{ menu.parent.id }}">{{ menu.parent.title }}</option>
+{#                                <option class="selected" value="{{ menu.parent.id }}">{{ menu.parent.title }}</option>#}
                                 {% for parent_menu in menu_list %}
                                     {% if parent_menu.id == menu.parent.id %}
                                         <option class="selected" value={{ parent_menu.id }} > {{ parent_menu.title }} </option>

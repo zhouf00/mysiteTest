@@ -6,7 +6,7 @@
 {% block cardbody %}
 <div class="control-btns">
         <button class="btn btn-primary btn-add" id="addRow">新建</button>
-        <button class="btn btn-primary btn-add">保存</button>
+{#        <button class="btn btn-primary btn-add">保存</button>#}
     </div>
     <div class="tabs">
         <table class="table table-bordered text-center" id="table">
@@ -37,17 +37,17 @@
                 {% endfor %}
             {% else %}
                 <tr id="tab-1">
-                        <input type="hidden" value="{{ manufacturer.id }}">
-                        <td>{{ forloop.counter }}</td>
-                        <td><select>
-                            <option value="1">风力发力</option>
-                            <option value="2">火力发力</option>
-                            <option value="3">水力发力</option>
-                        </select></td>
-                        <td><input type="text" value="金风科技(示例)"></td>
-                        <td><input type="text">{{ manufacturer.memo }}</td>
-                        <td><button title='保存' onclick='doSave("tab-1")' ><i class='fas fa-pencil-alt'></i></button></td>
-                    </tr>
+                    <input type="hidden" value="{{ manufacturer.id }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td><select>
+                        <option value="1">风力发力</option>
+                        <option value="2">火力发力</option>
+                        <option value="3">水力发力</option>
+                    </select></td>
+                    <td><input type="text" value="金风科技(示例)"></td>
+                    <td><input type="text">{{ manufacturer.memo }}</td>
+                    <td><button title='保存' onclick='doSave("tab-1")' ><i class='fas fa-pencil-alt'></i></button></td>
+                </tr>
             {% endif %}
             </tbody>
         </table>
@@ -61,11 +61,6 @@
         $('#addRow').click(function () {
             let num = Number($('#table tbody tr').length +1);
             <!-- 后台传JSON -->
-            {#let model = {{ model | safe }};#}
-            {#let selectHtml = ``;#}
-            {#for (let key in model){#}
-            {#    selectHtml += `<option value=\'${key}\'>${model[key]}</option>`#}
-            {#}#}
             let html = `<tr id='tab-${num}'>
                  <input type="hidden" value="">
                  <td>${num}</td>

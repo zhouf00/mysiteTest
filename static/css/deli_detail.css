@@ -40,3 +40,78 @@
 .text-a{
     float: right;
 }
+.deli_list{
+    max-height: 200px;
+    overflow-y: auto;
+}
+.deli_list li{
+    list-style: none;
+    margin-bottom: 5px;
+    display: inline-block;
+    border-bottom: 1px solid #ccc;
+}
+.deli_list li span{
+    padding: 0 10px;
+}
+.img{
+    width: 100px;
+    height: 100px;
+    display: inline-block;
+}
+.img img{
+    width: 100%;
+}
+.title{
+    font-size: 18px;
+}
+.block{
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.text-block{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    text-align: center;
+}
+.block2{
+    margin-bottom: 112px;
+}
+textarea{
+    text-align: left;
+    margin-bottom: 10px;
+}
+.btn-send{
+    margin-bottom: 10px;
+}
+.tips{
+    font-size: 18px;
+    color: #007bff;
+}
+#outerdiv{
+    z-index:99999;
+    position:fixed;
+    top:0;
+    left:0;
+    background:rgba(0,0,0,0.7);
+    width:100%;
+    height:100%;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+#bigimg{
+    border:5px solid #fff;
+    max-width: 100%;
+}
+.sections{
+    position: relative;
+}
+.blockOuter{
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+}

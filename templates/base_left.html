@@ -22,7 +22,7 @@
                     {% if not menu.url %}
                         <li class="nav-item has-treeview menu-open">
                             <a href="{{menu.url}}" id="{{ menu.code }}" class="nav-link">
-                                <i class="nav-icon {{menu.icon}}"></i>
+                                <i class="nav-icon iconfont {{menu.icon}}"></i>
                                 <p>
                                     {{menu.title}}
                                     <i class="right fas fa-angle-left"></i>
@@ -42,7 +42,7 @@
                     {% else %}
                         <li class="nav-item">
                             <a href="{{ menu.url }}" id="{{ menu.code }}" class="nav-link">
-                                <i class="nav-icon fas {{ menu.icon }}"></i>
+                                <i class="nav-icon iconfont fas {{ menu.icon }}"></i>
                                 <p>
                                   {{menu.title}}
                                 </p>

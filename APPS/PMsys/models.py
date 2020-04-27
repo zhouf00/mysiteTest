@@ -30,8 +30,8 @@ class Items(BaseModel):
 
     item_type = models.SmallIntegerField(choices=ITEMS_TYPE_CHOICE, default=1, verbose_name='项目类型')
     name = models.CharField(max_length=64, unique=True, verbose_name='项目名称')  # 不可重复
-    x = models.FloatField(null=True, blank=True, verbose_name='坐标x')
-    y = models.FloatField(null=True, blank=True, verbose_name='坐标y')
+    x = models.FloatField(verbose_name='坐标x')
+    y = models.FloatField(  verbose_name='坐标y')
     status = models.SmallIntegerField(choices=ITEM_STATUS, default=0, verbose_name='项目状态')
     address = models.CharField(max_length=64, null=True, blank=True, verbose_name='地址')
     telephone = models.CharField(max_length=16, null=True, blank=True, verbose_name='值班电话')
@@ -235,14 +235,23 @@ class ItemExecutr(BaseModel):
     """项目施工人信息"""
 
     items = models.ForeignKey('Items', on_delete=models.CASCADE)
-    name = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL,
-                             verbose_name='申请人')
+    name = models.ForeignKey(User, on_delete=models.CASCADE,
+                             verbose_name='施工人员')
+    status = models.SmallIntegerField(verbose_name='施工人员状态')
     begintime = models.DateTimeField(verbose_name='开始时间')
     endtime = models.DateTimeField(verbose_name='结束时间')
 
     class Meta:
         verbose_name = '施工人员表'
         verbose_name_plural = verbose_name
+
+
+class PersonTrack(BaseModel):
+
+    name = models.CharField(max_length=32, verbose_name='人员名字')
+    items = models.ForeignKey('Items', on_delete=models.CASCADE)
+    status = models.SmallIntegerField(verbose_name='施工人员状态')
+    begintime = models.DateTimeField(verbose_name='开始时间')
 
 
 class ItemServer(BaseModel):
@@ -274,6 +283,7 @@ class ItemServer(BaseModel):
     disk_type = models.SmallIntegerField(null=True, blank=True, choices=DISK_TYPE_CHOICE, default=1,
                                          verbose_name='硬盘类型')
     disk_size = models.IntegerField(null=True, blank=True, verbose_name='硬盘大小')
+    disk_unit = models.SmallIntegerField(verbose_name='硬盘单位')
     disk_count = models.SmallIntegerField(null=True, blank=True, default=1, verbose_name='硬盘个数')
     raid_type = models.SmallIntegerField(null=True, blank=True, default=0, choices=RAID_TYPE_CHOICE, verbose_name='阵列')
     nic1 = models.GenericIPAddressField(null=True, blank=True, verbose_name='网卡1')
@@ -283,6 +293,7 @@ class ItemServer(BaseModel):
     place = models.CharField(max_length=128, null=True, blank=True, verbose_name='放置位置')
     pc_username = models.CharField(max_length=32, null=True, blank=True, verbose_name='电脑帐号')
     pc_passwd = models.CharField(max_length=32, null=True, blank=True, verbose_name='电脑密码')
+    memo = models.TextField(null=True, blank=True, verbose_name='备注')
 
     def __str__(self):
         return self.server_model
@@ -364,8 +375,9 @@ class SensorType(BaseModel):
 
 
 class ItemGoods(BaseModel):
-    """发货信息"""
+    """库存发货信息"""
     items = models.ForeignKey('Items', on_delete=models.CASCADE)
+    type = models.SmallIntegerField(verbose_name='类型') # 1：发货   2：库存
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='发货人')
     memo = models.TextField(verbose_name='发货说明')
 

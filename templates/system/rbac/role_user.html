@@ -15,9 +15,9 @@
                     <div class="col-5">
                         <label for="">可选用户：</label>
                         <select name="from" id="multiselect" class="form-control" size="15" multiple="multiple">
-                            {% for item in un_add_users %}
-                                <option value="{{ item.id }}">{{ item.name }}({{ item.username }})</option>
-                            {% endfor %}
+{#                            {% for item in un_add_users %}#}
+{#                                <option value="{{ item.id }}">{{ item.name }}({{ item.username }})</option>#}
+{#                            {% endfor %}#}
                         </select>
                     </div>
                     <div class="col-2">
@@ -68,7 +68,7 @@
         $('#btnSave').click(function () {
             $('#multiselect_to option').prop('selected', true);
             var data=$('#selectUsersForm').serialize();
-            console.log(data);
+            {#console.log(data);#}
             $.ajax({
                 type: $('#selectUsersForm').attr('method'),
                 url: '{% url "system-rbac:role_user" %}',

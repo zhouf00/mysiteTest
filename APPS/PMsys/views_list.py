@@ -12,10 +12,11 @@ from system.models import SystemSetup
 from PMsys import models as pms
 from PMsys.call_project import NewPower
 from PMsys.forms import (ItemServerForm, DevinfoForm, ManuinfoForm, FacilityForm, SensorForm,
-                         PowerForm, ImageForm)
+                         PowerForm, ImageForm, LinkForm)
 
 
 class ListDevView(LoginRequiredMixin, View):
+    """设备列表信息"""
 
     def get(self, request):
         if 'id' in request.GET and request.GET['id']:
@@ -46,6 +47,7 @@ class ListDevView(LoginRequiredMixin, View):
 
 
 class ListDevDetailView(LoginRequiredMixin, View):
+    """设备查看视图"""
 
     def get(self, request):
         # 清空数据
@@ -65,7 +67,7 @@ class ListDevDetailView(LoginRequiredMixin, View):
             item_power = pms.ItemPower.objects.filter(pk=int(request.GET['powerId']))[0]
             item_facility = pms.ItemFacilitys.objects.filter(itempower=item_power)
             item_sensors = pms.ItemSensors.objects.filter(itemfacility=item_facility[0])
-            print(item_facility[0], item_sensors)
+            # print(item_facility[0], item_sensors)
             ret['item_power'] = item_power
             ret['item_facility'] = item_facility[0]
             ret['item_sensors'] = item_sensors
@@ -109,13 +111,13 @@ class ListDevDetailView(LoginRequiredMixin, View):
 
 
 class ListServerView(LoginRequiredMixin, View):
+    """服务器视图"""
 
     def get(self, request):
         request.session['status'] = None
         fields = ['id', 'server_type', 'server_model', 'sn', 'os_release', 'soft_release', 'cpu', 'cpu_count',
                   'ram', 'disk_type', 'disk_size', 'disk_count', 'raid_type', 'place', 'pc_username', 'pc_passwd',
-                  'nic1', 'nic2', 'nic3', 'nic4']
-
+                  'nic1', 'nic2', 'nic3', 'nic4', 'disk_unit', 'memo']
         if 'serverid' in request.GET and request.GET.get('serverid'):
             ret = dict(data=list(pms.ItemServer.objects.filter(pk=int(request.GET.get('serverid'))).values(*fields))[0])
             # print(ret)
@@ -125,26 +127,31 @@ class ListServerView(LoginRequiredMixin, View):
         return render(request, 'PMsys/pro_list/detail/server_detail.html', ret)
 
     def post(self, request):
-
+        print(request.POST)
         if 'id' in request.POST and request.POST['id']:
             server = get_object_or_404(pms.ItemServer, pk=int(request.POST['id']))
             server_form = ItemServerForm(request.POST, instance=server)
         else:
             server_form = ItemServerForm(request.POST)
+        print(server_form)
         if server_form.is_valid():
             server_form.save()
             ret ={
                 'result': 'success'
             }
         else:
+            pattern = '<li>.*?<ul class=.*?><li>(.*?)</li>'
+            errors = str(server_form.errors)
+            explainform_errors = re.findall(pattern, errors)
             ret = {
                 'result': 'fail',
-                'massage': server_form.errors
+                'massage': explainform_errors[0]
             }
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 class ListRelatedView(LoginRequiredMixin, View):
+    """项目相关视图"""
 
     def get(self, request):
 
@@ -152,12 +159,14 @@ class ListRelatedView(LoginRequiredMixin, View):
 
 
 class ListDeliView(ListRelatedView, View):
-
+    """库存发货视图"""
     def get(self, request):
-        item_goods = pms.ItemGoods.objects.all()
+        item_goods = pms.ItemGoods.objects.filter(items_id=request.session['item_id']).filter(type=1)
+        item_inventory = pms.ItemGoods.objects.filter(items_id=request.session['item_id']).filter(type=2)
         goods_image = pms.GoodsImage.objects.all()
         ret = {
             'item_goods': item_goods,
+            'item_inventory':item_inventory,
             'goods_image': goods_image,
         }
         return render(request, 'PMsys/pro_list/detail/deli_detail.html', ret)
@@ -166,6 +175,7 @@ class ListDeliView(ListRelatedView, View):
         if request.FILES and 'memo' in request.POST and request.POST['memo'] :
             goods = pms.ItemGoods.objects.create(
                 items_id=int(request.POST['items']),
+                type=request.POST['type'],
                 user_id=request.POST['user'],
                 memo=request.POST['memo']
             )
@@ -173,7 +183,7 @@ class ListDeliView(ListRelatedView, View):
             for file in files:
                 # print({'image':file})
                 image_form = ImageForm({'goods':goods.id}, {'image':file})
-                print(image_form)
+                # print(image_form)
                 if image_form.is_valid():
                     image_form.save()
             ret = {
@@ -190,20 +200,41 @@ class ListDeliView(ListRelatedView, View):
 
 
 class ListPersonView(ListRelatedView, View):
+    """联系人"""
 
     def get(self, request):
-
-        return render(request, 'PMsys/pro_list/detail/person_detail.html')
+        linkman = pms.ItemLinkman.objects.filter(items_id=int(request.session['item_id']))
+        print(linkman)
+        ret = {
+            'data': linkman
+        }
+        return render(request, 'PMsys/pro_list/detail/person_detail.html', ret)
 
     def post(self, request):
-
-        ret = {}
+        # print(request.POST)
+        if 'id' in request.POST and request.POST['id']:
+            linkman = get_object_or_404(pms.ItemLinkman, pk=int(request.POST['id']))
+            link_form = LinkForm(request.POST, instance=linkman)
+        else:
+            link_form = LinkForm(request.POST)
+        if link_form.is_valid():
+            link_form.save()
+            # pass
+            ret = {
+                'result': 'success',
+                'msg': '保存成功'
+            }
+        else:
+            ret = {
+                'result': 'fail',
+                'msg': '保存失败'
+            }
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 # 资源管理
 class FacilManuView(LoginRequiredMixin, View):
-
+    """厂家信息"""
     def get(self, request):
 
         ret = dict(data=pms.Manufacturer.objects.all())
@@ -226,6 +257,7 @@ class FacilManuView(LoginRequiredMixin, View):
 
 
 class FacilDevView(LoginRequiredMixin, View):
+    """设备信息"""
 
     def get(self, request):
         fields = ['id', 'title']
@@ -256,6 +288,7 @@ class FacilDevView(LoginRequiredMixin, View):
 
 
 class FacilColView(LoginRequiredMixin, View):
+    """采集器信息"""
 
     def get(self, request):
         ret = dict(data=pms.FacilityType.objects.all())
@@ -282,6 +315,7 @@ class FacilColView(LoginRequiredMixin, View):
 
 
 class FacilSensorView(LoginRequiredMixin, View):
+    """传感器信息"""
 
     def get(self, request):
         ret = dict(data=pms.SensorType.objects.all())
@@ -295,8 +329,6 @@ class FacilSensorView(LoginRequiredMixin, View):
             sensor_form = SensorForm(request.POST, instance=sensor)
         else:
             sensor_form = SensorForm(request.POST)
-
-
         if sensor_form.is_valid():
             sensor_form.save()
             ret = {'result': 'success'}
@@ -313,13 +345,17 @@ class FacilSensorView(LoginRequiredMixin, View):
 class FacilPasswdView(LoginRequiredMixin, View):
 
     def get(self, request):
-        f = open(os.path.join(os.getcwd() +'\\APPS\\utils\\tools\\passwd.txt'), 'r')
-        a = f.readlines()
-        pwd_dict = dict()
-        for var in a:
-            key, value = var.split(':')
-            pwd_dict[key] = value.strip()
-        ret = {
-            'passwds' : pwd_dict
-        }
+        pwdfile = os.path.join(os.getcwd(),'APPS','utils','tools','passwd.txt')
+        if os.path.isfile(pwdfile):
+            f = open(pwdfile, 'r')
+            a = f.readlines()
+            pwd_dict = dict()
+            for var in a:
+                key, value = var.split(':')
+                pwd_dict[key] = value.strip()
+            ret = {
+                'passwds' : pwd_dict
+            }
+        else:
+            ret = {}
         return render(request, 'PMsys/pro_facil/list/pwd_info.html', ret)
